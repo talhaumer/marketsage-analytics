@@ -1,124 +1,152 @@
-# 🧠 MarketSage Analytics
+# MarketSage Analytics
 
-A sophisticated multi-agent financial analysis system built with LangGraph and powered by Gorq LLM. MarketSage Analytics provides comprehensive financial analysis through specialized AI agents working in a coordinated workflow, delivering intelligent market insights and investment recommendations.
+A multi-agent financial analysis system built with LangGraph and powered by Groq LLM. MarketSage provides comprehensive financial analysis through specialized AI agents working in a coordinated workflow, delivering intelligent market insights, technical indicators, and interactive visualizations.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![LangGraph](https://img.shields.io/badge/LangGraph-0.2.16-purple.svg)
-![Gorq](https://img.shields.io/badge/Gorq-LLM-green.svg)
+![Groq](https://img.shields.io/badge/Groq-LLM-green.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)
+![Gradio](https://img.shields.io/badge/Gradio-4.x-orange.svg)
+![Plotly](https://img.shields.io/badge/Plotly-5.24-blue.svg)
 
-## 🚀 Features
+---
 
-### 🤖 Multi-Agent Architecture
-- **Market Research Agent** - Real-time market data and trends analysis
-- **Financial Data Agent** - Comprehensive financial metrics and ratios
-- **Technical Analysis Agent** - Chart patterns and technical indicators
-- **Risk Assessment Agent** - Portfolio risk evaluation and management
-- **Sentiment Analysis Agent** - Market sentiment and news analysis
-- **Portfolio Analysis Agent** - Asset allocation and optimization
-- **Sector Analysis Agent** - Sector performance and rotation analysis
-- **Crypto Analysis Agent** - Cryptocurrency market analysis with technical indicators
+## Features
 
-### 📊 Analysis Types
-- **Comprehensive Analysis** - Full multi-agent analysis
-- **Quick Analysis** - Fast stock price and basic info
-- **Technical Analysis** - Chart patterns, moving averages, RSI, MACD
-- **Risk Assessment** - Volatility analysis and risk mitigation
-- **Sentiment Analysis** - Market mood and news sentiment
-- **Portfolio Analysis** - Diversification and optimization
-- **Crypto Analysis** - Cryptocurrency market analysis with price trends and indicators
+### Multi-Agent Architecture
 
-### 🎯 Key Capabilities
-- Real-time stock data via Yahoo Finance
-- Cryptocurrency data via CoinGecko API
-- Live market news via DuckDuckGo Search
-- Interactive Gradio interface
-- FastAPI backend with comprehensive endpoints
-- Portfolio risk assessment and optimization
-- Technical indicator calculations (RSI, MACD, volatility)
-- Market sentiment analysis
-- Crypto correlation analysis
-- Query history tracking and statistics
+| Agent | Responsibility |
+|-------|---------------|
+| Market Research Agent | Real-time market data and trend analysis |
+| Financial Data Agent | Financial metrics, ratios, and fundamentals |
+| Technical Analysis Agent | Chart patterns, moving averages, RSI, MACD |
+| Risk Assessment Agent | Portfolio risk evaluation and volatility analysis |
+| Sentiment Analysis Agent | Market mood and news sentiment |
+| Portfolio Analysis Agent | Asset allocation and optimization |
+| Sector Analysis Agent | Sector performance and rotation analysis |
+| Crypto Analysis Agent | Cryptocurrency market analysis with on-chain metrics |
 
-## 🛠️ Tech Stack
+### Analysis Types
 
-- **Frontend:** Gradio
-- **Backend:** FastAPI
-- **AI Framework:** LangGraph (multi-agent workflow system)
-- **LLM:** Groq LLM (with OpenAI fallback)
-- **Data Sources:** Yahoo Finance, CoinGecko, DuckDuckGo Search
-- **Crypto Data:** pycoingecko (with support for CryptoQuant, Glassnode, LunarCrush)
-- **Deployment:** Docker-ready, Hugging Face Spaces compatible
+- **Comprehensive** — Full multi-agent pipeline across all domains
+- **Quick** — Fast stock price and basic fundamentals
+- **Technical** — Chart patterns, RSI, MACD, moving averages
+- **Risk** — Volatility analysis and risk mitigation strategies
+- **Sentiment** — Market mood and news sentiment scoring
+- **Portfolio** — Diversification analysis and optimization
+- **Crypto** — Cryptocurrency trends, indicators, and correlation
 
-## 📦 Installation
+### Interactive Visualizations
+
+- Price history charts (stocks and crypto)
+- Technical indicators (RSI, MACD) with subplots
+- Portfolio allocation pie chart
+- Sector performance comparison
+- Correlation heatmap across symbols
+- Volume analysis with color-coded bars
+- Performance comparison bar chart
+
+### Data Sources
+
+- **Stocks:** Yahoo Finance (yfinance)
+- **Crypto:** CoinGecko API (pycoingecko)
+- **News:** DuckDuckGo Search
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Gradio 4.x + Plotly |
+| Backend | FastAPI |
+| AI Workflow | LangGraph |
+| LLM | Groq (`llama-3.3-70b-versatile`) with mock fallback |
+| Data | Yahoo Finance, CoinGecko, DuckDuckGo |
+
+---
+
+## Installation
 
 ### Prerequisites
-- Python 3.8 or higher
-- Groq API key (or OpenAI API key as fallback)
-- Git (for cloning)
-- Optional: API keys for advanced crypto data (CryptoQuant, Glassnode, LunarCrush)
 
-### Local Development Setup
+- Python 3.8+
+- Groq API key — get one free at [console.groq.com](https://console.groq.com) *(optional — falls back to mock LLM)*
+- Git
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd MarketSage-Analytics
-   ```
+### Setup
 
-2. **Create virtual environment:**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+```bash
+# 1. Clone the repo
+git clone <repository-url>
+cd MarketSage-Analytics
 
-3. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+# 2. Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
 
-4. **Set up environment variables:**
-   ```bash
-   cp env.example .env
-   # Edit .env with your API keys
-   ```
+# 3. Install dependencies
+pip install -r requirements.txt
 
-5. **Run the system:**
-   
-   **Option A: Run backend and frontend separately**
-   ```bash
-   # Terminal 1 - Backend
-   python main.py
-   
-   # Terminal 2 - Frontend
-   python run_frontend.py
-   ```
-   
-   **Option B: Run with Docker (coming soon)**
-   ```bash
-   docker-compose up
-   ```
+# 4. Configure environment
+cp env.example .env
+# Edit .env and add your GROQ_API_KEY
+```
 
-6. **Access the application:**
-   - Frontend: http://localhost:7860
-   - Backend API: http://localhost:8000
-   - API Documentation: http://localhost:8000/docs
+---
 
-## 🎮 Usage
+## Running the App
 
-### Quick Start
-1. **Select Analysis Type** from the sidebar (comprehensive, quick, technical, risk, sentiment, portfolio, crypto)
-2. **Enter Stock or Crypto Symbols** 
-   - Stocks: AAPL, MSFT, GOOGL
-   - Crypto: BTC, ETH, SOL, DOGE
-3. **Choose Timeframe** (1d, 1mo, 1y, etc.)
-4. **Click "Run LangGraph Analysis"**
-5. **View Results** in the main panel
+### Option A: Standard Frontend
 
-### API Usage
+```bash
+# Terminal 1 — Start backend
+python main.py
 
-#### Financial Analysis
+# Terminal 2 — Start frontend
+python run_frontend.py
+```
+
+### Option B: Frontend with Interactive Visualizations (recommended)
+
+```bash
+# Terminal 1 — Start backend
+python main.py
+
+# Terminal 2 — Start enhanced frontend with charts
+bash run_frontend_with_viz.sh
+```
+
+> **Note:** If no `GROQ_API_KEY` is set, the backend starts with a mock LLM that returns template responses. Charts and data fetching work fully regardless.
+
+### Access
+
+| Service | URL |
+|---------|-----|
+| Frontend (Gradio) | http://localhost:7860 |
+| Backend API | http://localhost:8000 |
+| API Docs (Swagger) | http://localhost:8000/docs |
+
+---
+
+## Usage
+
+### Web Interface
+
+1. Open http://localhost:7860
+2. Use a **Quick Start Template** or configure manually:
+   - Select **Analysis Type** (comprehensive, technical, risk, etc.)
+   - Enter **Symbols** — stocks (`AAPL, MSFT`) or crypto (`BTC, ETH`)
+   - Choose **Timeframe** (`1d`, `1mo`, `1y`, etc.)
+   - Set **Risk Tolerance** (conservative / moderate / aggressive)
+3. Click **Run Analysis with Visualizations**
+4. View AI analysis results and interactive charts
+
+The **Quick Charts** tab generates charts instantly without running AI analysis.
+
+### REST API
+
+**Financial analysis:**
 ```python
 import requests
 
@@ -134,148 +162,139 @@ result = response.json()
 print(result["data"]["final_analysis"])
 ```
 
-#### Portfolio Analysis
+**Portfolio analysis:**
 ```python
 response = requests.post("http://localhost:8000/portfolio", json={
     "symbols": ["AAPL", "MSFT", "GOOGL", "TSLA"],
     "risk_tolerance": "moderate"
 })
-
-result = response.json()
-print(result["data"]["final_analysis"])
+print(response.json()["data"]["final_analysis"])
 ```
 
-#### Crypto Analysis
+**Crypto analysis:**
 ```python
 response = requests.post("http://localhost:8000/analyze", json={
-    "question": "Analyze the crypto market trends for Bitcoin and Ethereum",
+    "question": "Analyze Bitcoin and Ethereum market trends",
     "analysis_type": "crypto",
     "symbols": ["BTC", "ETH", "SOL"],
-    "timeframe": "7d",
-    "risk_tolerance": "moderate"
+    "timeframe": "1mo",
+    "risk_tolerance": "aggressive"
 })
 
 result = response.json()
-print(result["data"]["final_analysis"])
-# Access crypto-specific data
 print(result["data"]["individual_analyses"]["crypto_analysis"])
 ```
 
-## 📁 Project Structure
+---
+
+## Project Structure
 
 ```
 MarketSage-Analytics/
 ├── src/
-│   ├── agents/              # Individual agent implementations
-│   ├── tools/               # Financial tools and Gorq LLM integration
-│   │   ├── gorq_llm.py     # Gorq LLM integration
-│   │   └── financial_tools.py  # Financial analysis tools
-│   ├── workflows/           # LangGraph workflow definitions
-│   │   └── financial_analysis_workflow.py
-│   ├── api/                 # FastAPI backend
-│   │   └── main.py
-│   └── frontend/            # Streamlit frontend
-│       └── app.py
-├── tests/                   # Test files
-├── docs/                    # Documentation
-├── main.py                  # Backend entry point
-├── run_frontend.py          # Frontend entry point
-├── requirements.txt         # Python dependencies
-├── env.example             # Environment variables template
-└── README.md               # This file
+│   ├── agents/                        # Individual agent implementations
+│   ├── tools/
+│   │   ├── gorq_llm.py               # Groq LLM integration + mock fallback
+│   │   ├── financial_tools.py        # Financial data fetching tools
+│   │   └── crypto_data_tools.py      # CoinGecko crypto data client
+│   ├── workflows/
+│   │   ├── financial_analysis_workflow.py  # LangGraph workflow definition
+│   │   └── state.py                  # Workflow state schema
+│   ├── api/
+│   │   ├── main.py                   # FastAPI routes
+│   │   └── models.py                 # Pydantic request/response models
+│   └── frontend/
+│       ├── gradio_app.py             # Standard Gradio frontend
+│       └── gradio_app_with_viz.py    # Enhanced frontend with Plotly charts
+├── tests/                            # Test files
+├── docs/                             # Documentation
+├── main.py                           # Backend entry point
+├── run_frontend.py                   # Standard frontend entry point
+├── run_frontend_with_viz.sh          # Enhanced frontend launcher (with charts)
+├── requirements.txt
+├── env.example                       # Environment variables template
+└── README.md
 ```
-
-## 🔧 Configuration
-
-### Environment Variables
-- `GROQ_API_KEY`: Your Groq API key (required)
-- `GROQ_BASE_URL`: Groq API base URL (optional)
-- `GROQ_MODEL`: Groq model name (optional)
-- `OPENAI_API_KEY`: OpenAI API key (fallback if Groq unavailable)
-- `API_BASE_URL`: Backend API URL (default: http://localhost:8000)
-
-### Crypto Data Providers (Optional)
-- `COINGECKO_API_KEY`: Free tier works, API key optional for higher limits
-- `CRYPTOQUANT_API_KEY`: For on-chain metrics (placeholder - requires implementation)
-- `GLASSNODE_API_KEY`: For blockchain analytics (placeholder - requires implementation)
-- `LUNARCRUSH_API_KEY`: For social sentiment (placeholder - requires implementation)
-
-### Customization
-- Modify agent instructions in `src/workflows/financial_analysis_workflow.py`
-- Add new analysis types in the frontend
-- Customize UI styling in the Gradio app
-- Add new data sources or tools
-- Integrate advanced crypto data providers (CryptoQuant, Glassnode, LunarCrush) in `src/tools/crypto_data_tools.py`
-
-## 🚀 Deployment
-
-### Hugging Face Spaces
-1. Create a new Space on Hugging Face
-2. Upload the project files
-3. Add your API keys in Space settings
-4. Deploy and share your live app!
-
-### Docker Deployment
-```bash
-# Build the image
-docker build -t marketsage-analytics .
-
-# Run the container
-docker run -p 8000:8000 -p 8501:8501 marketsage-analytics
-```
-
-### Cloud Deployment
-- **Railway:** Deploy FastAPI backend
-- **Render:** Host both frontend and backend
-- **Heroku:** Full-stack deployment
-- **Vercel:** Frontend-only deployment
-
-## 🧪 Testing
-
-```bash
-# Run tests
-pytest tests/
-
-# Run with coverage
-pytest --cov=src tests/
-
-# Run specific test
-pytest tests/test_workflow.py
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **LangGraph Framework** for multi-agent workflow capabilities
-- **Gorq LLM** for advanced language model capabilities
-- **Yahoo Finance** for financial data
-- **DuckDuckGo** for news search
-- **Streamlit** for the web interface
-- **FastAPI** for the backend API
-
-## 📞 Support
-
-- **Issues:** [GitHub Issues](https://github.com/your-username/marketsage-analytics/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/your-username/marketsage-analytics/discussions)
-- **Email:** your-email@example.com
-
-## ⚠️ Disclaimer
-
-This application is for educational and research purposes only. The financial analysis provided should not be considered as investment advice. Always consult with qualified financial professionals before making investment decisions.
 
 ---
 
-**Made with ❤️ by [Your Name]**
+## Configuration
 
-*MarketSage Analytics - Intelligent financial analysis powered by AI agents and LangGraph*
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `GROQ_API_KEY` | Recommended | Groq API key for LLM inference |
+| `OPENAI_API_KEY` | Optional | Fallback if Groq is unavailable |
+| `API_BASE_URL` | Optional | Backend URL (default: `http://localhost:8000`) |
+| `COINGECKO_API_KEY` | Optional | Higher rate limits for crypto data |
+
+### Supported Symbols
+
+- **Stocks:** Any valid Yahoo Finance ticker (e.g., `AAPL`, `TSLA`, `SPY`)
+- **Crypto:** `BTC`, `ETH`, `SOL`, `BNB`, `XRP`, `ADA`, `DOGE`, `MATIC`, and more
+- Symbols must be letters only (A–Z), max 10 characters each
+
+---
+
+## Testing
+
+```bash
+# Run all tests
+pytest tests/
+
+# With coverage report
+pytest --cov=src tests/
+
+# Run a specific test
+pytest tests/test_workflow.py
+```
+
+---
+
+## Deployment
+
+### Hugging Face Spaces
+
+1. Create a new Space (Gradio SDK)
+2. Upload project files
+3. Add `GROQ_API_KEY` in Space secrets
+4. Set `API_BASE_URL` to your deployed backend URL
+
+### Docker
+
+```bash
+docker build -t marketsage-analytics .
+docker run -p 8000:8000 -p 7860:7860 marketsage-analytics
+```
+
+### Cloud Platforms
+
+- **Railway / Render:** Deploy FastAPI backend, expose port 8000
+- **Hugging Face Spaces:** Host the Gradio frontend
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Commit your changes (`git commit -m 'Add my feature'`)
+4. Push to the branch (`git push origin feature/my-feature`)
+5. Open a Pull Request
+
+---
+
+## Disclaimer
+
+This application is for educational and research purposes only. The financial analysis provided does not constitute investment advice. Always consult a qualified financial professional before making investment decisions.
+
+---
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+*MarketSage Analytics — Intelligent market insights powered by LangGraph and Groq LLM*
