@@ -5,10 +5,9 @@ This module contains all the data models used for request/response validation
 
 import re as _re
 from pydantic import BaseModel, Field, field_validator, ConfigDict
-from typing import List, Optional, Dict, Any, Union, TypedDict, Annotated
+from typing import List, Optional, Dict, Any, Union, TypedDict
 from datetime import datetime
 from enum import Enum
-import operator
 
 
 _SYMBOL_PATTERN = _re.compile(r'^[A-Za-z0-9.]{1,10}$')

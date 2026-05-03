@@ -7,8 +7,8 @@ Crypto detection delegates to ``utils.crypto_symbols`` (single source of truth).
 
 from typing import Dict, Any
 from workflows.state import State
-from utils.crypto_symbols import is_crypto, split_symbols
-from utils.input_detector import InputDetector, get_analysis_recommendation
+from utils.crypto_symbols import split_symbols
+from utils.input_detector import get_analysis_recommendation
 
 
 class SmartAnalysisRouter:

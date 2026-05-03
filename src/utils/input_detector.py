@@ -3,8 +3,7 @@ Intelligent Input Detection System
 Automatically detects whether user input requires Yahoo Finance (stocks) or crypto analysis
 """
 
-from typing import Dict, List, Tuple, Any
-import re
+from typing import Dict, List, Any
 
 from utils.crypto_symbols import CRYPTO_SYMBOLS as _CANONICAL_CRYPTO_SYMBOLS
 

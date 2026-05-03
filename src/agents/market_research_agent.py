@@ -3,7 +3,6 @@ Market Research Agent
 Analyzes market trends, news, and provides comprehensive market research insights.
 """
 
-import json
 import logging
 from langchain_core.messages import HumanMessage
 from tools.groq_llm import get_llm
