@@ -20,6 +20,7 @@ import pandas as pd
 from langchain_core.messages import HumanMessage
 
 from agents.base_agent import BaseAgent
+from agents.shared_prompts import build_prompt
 from tools.groq_llm import get_llm
 from workflows.state import State
 
@@ -242,34 +243,25 @@ def crypto_agent(state: State) -> State:
                 }
         
         # Convert to JSON for prompt (much smaller now!)
-        crypto_summary_json = json.dumps(crypto_summary, indent=2, default=str)
-        
-        prompt = f"""
-        As a Cryptocurrency Analysis Specialist, analyze the following crypto market data:
-        
-        **Question:** {state.get('question', 'Analyze the crypto market')}
-        **Crypto Symbols:** {', '.join(crypto_symbols)}
-        **Timeframe:** {state.get('timeframe', '7d')}
-        **Analysis Type:** {state.get('analysis_type', 'comprehensive')}
-        
-        **Crypto Market Data Summary:**
-        ```json
-        {crypto_summary_json}
-        ```
-        
-        Provide a comprehensive cryptocurrency analysis including:
-        1. **Price Analysis** - Current prices, trends, and momentum
-        2. **Technical Indicators** - RSI, MACD interpretation and signals
-        3. **Volatility Assessment** - Risk levels and price stability
-        4. **Correlation Analysis** - How assets move together
-        5. **Market Sentiment** - Bullish/bearish indicators
-        6. **Trading Signals** - Entry/exit recommendations (if applicable)
-        7. **Risk Factors** - Specific crypto-related risks
-        
-        Format your response in clear, professional markdown with specific insights and actionable information.
-        Focus on crypto-specific factors like blockchain metrics, adoption, and market dynamics.
-        """
-        
+        crypto_summary_json = json.dumps(crypto_summary, default=str)
+
+        prompt = build_prompt(
+            role="Cryptocurrency Analysis Specialist",
+            question=state.get("question", "Analyze the crypto market"),
+            symbols=crypto_symbols,
+            timeframe=state.get("timeframe", "7d"),
+            data_summary=crypto_summary_json[:3000],
+            analysis_points=[
+                "Price Analysis - Current prices, trends, and momentum",
+                "Technical Indicators - RSI, MACD interpretation and signals",
+                "Volatility Assessment - Risk levels and price stability",
+                "Correlation Analysis - How assets move together",
+                "Market Sentiment - Bullish/bearish indicators",
+                "Trading Signals - Entry/exit recommendations (if applicable)",
+                "Risk Factors - Specific crypto-related risks",
+            ],
+        )
+
         response = llm.invoke([HumanMessage(content=prompt)])
         state['crypto_analysis'] = response.content if hasattr(response, 'content') else str(response)
         

@@ -3,9 +3,12 @@ Final Synthesis Agent
 Combines all analyses into a comprehensive executive report with actionable recommendations.
 """
 
+import json
+import logging
 from langchain_core.messages import HumanMessage
 from typing import Dict, Any, List
 from tools.groq_llm import get_llm
+from agents.shared_prompts import build_prompt
 from workflows.state import State
 
 
@@ -252,59 +255,27 @@ def final_synthesis_agent(state: State) -> State:
             """
         
         else:  # comprehensive or default
-            prompt = f"""
-            As a Master Financial Analyst, synthesize the following comprehensive analysis into an executive report:
-            
-            **Original Question:** {state['question']}
-            **Analysis Type:** {state['analysis_type']}
-            **Symbols:** {symbols_text}
-            **Timeframe:** {state['timeframe']}
-            **Risk Tolerance:** {state.get('risk_tolerance', 'moderate')}
-            
-            **Individual Agent Analyses:**
-            - **Market Research:** {analyses['market_research']}
-            - **Financial Data:** {analyses['financial_data']}
-            - **Technical Analysis:** {analyses['technical_analysis']}
-            - **Risk Assessment:** {analyses['risk_assessment']}
-            - **Sentiment Analysis:** {analyses['sentiment_analysis']}
-            - **Portfolio Analysis:** {analyses['portfolio_analysis']}
-            - **Sector Analysis:** {analyses['sector_analysis']}
-            - **Crypto Analysis:** {analyses['crypto_analysis']}
-            
-            Create a comprehensive, executive-level financial analysis report that includes:
-            
-            ## 📊 Executive Summary
-            - Key findings and recommendations
-            - Overall market outlook
-            - Investment thesis
-            
-            ## 🎯 Investment Recommendations
-            - Specific buy/sell/hold recommendations
-            - Price targets and timeframes
-            - Confidence levels for each recommendation
-            
-            ## ⚠️ Risk Considerations
-            - Key risks and mitigation strategies
-            - Risk-reward analysis
-            - Portfolio impact assessment
-            
-            ## 📈 Market Outlook
-            - Short-term and long-term market expectations
-            - Key catalysts and events to watch
-            - Sector rotation opportunities
-            
-            ## 🎯 Actionable Next Steps
-            - Immediate actions to take
-            - Monitoring and review schedule
-            - Contingency plans
-            
-            Format your response as a professional financial report with clear sections, actionable insights, and specific recommendations.
-            """
-        
+            prompt = build_prompt(
+                role=f"Master Financial Analyst (risk tolerance: {state.get('risk_tolerance', 'moderate')})",
+                question=state.get("question", ""),
+                symbols=symbols_list,
+                timeframe=state.get("timeframe", "1mo"),
+                data_summary=json.dumps(analyses, default=str)[:3000],
+                analysis_points=[
+                    "Executive Summary - Key findings, market outlook, and investment thesis",
+                    "Investment Recommendations - Buy/sell/hold with price targets and confidence",
+                    "Risk Considerations - Key risks, mitigation, and portfolio impact",
+                    "Market Outlook - Short and long-term expectations and catalysts",
+                    "Actionable Next Steps - Immediate actions, monitoring schedule, contingencies",
+                ],
+            )
+
         response = llm.invoke([HumanMessage(content=prompt)])
         state['final_analysis'] = response.content if hasattr(response, 'content') else str(response)
-        
-    except Exception as e:
-        state['error'] = f"Final synthesis error: {str(e)}"
-    
+
+    except Exception as exc:
+        logging.getLogger(__name__).error("final_synthesis_agent error: %s", exc, exc_info=True)
+        state['error'] = f"Final synthesis error: {exc}"
+        state['final_analysis'] = f"Synthesis unavailable: {exc}"
+
     return state
