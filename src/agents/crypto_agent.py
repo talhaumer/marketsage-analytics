@@ -1,45 +1,34 @@
 """
 src/agents/crypto_agent.py
 
-MVP CryptoAgent implementation.
+CryptoAgent implementation.
 - Uses CoinGecko (pycoingecko) by default to fetch market time-series
 - Computes simple indicators (RSI, MACD)
-- Returns a JSON-serializable analysis payload suitable for the Streamlit frontend or FastAPI endpoint
+- Returns a JSON-serializable analysis payload suitable for the frontend
+  or FastAPI endpoint
 
-Notes:
-- This file provides a lightweight default data client (_CoinGeckoClient). A richer connector (CryptoQuant, Glassnode, LunarCrush) should be implemented in src/tools/crypto_data_tools.py and passed in via the `data_client` constructor argument.
-- The class will gracefully fall back to a minimal BaseAgent if your repo does not expose one at src.agents.base_agent.
-
-Requirements (MVP): pycoingecko, pandas, numpy
+A richer connector (CryptoQuant, Glassnode, LunarCrush) lives in
+src/tools/crypto_data_tools.py and may be passed in via the ``data_client``
+constructor argument.
 """
-from typing import List, Dict, Any, Optional
-import pandas as pd
-import numpy as np
-import time
 import json
+import logging
+from typing import Any, Dict, List, Optional
 
-# LangGraph integration
+import numpy as np
+import pandas as pd
 from langchain_core.messages import HumanMessage
-try:
-    from tools.groq_llm import get_llm
-    from workflows.state import State
-except:
-    State = None
-    get_llm = None
 
-# optional import: pycoingecko
+from agents.base_agent import BaseAgent
+from tools.groq_llm import get_llm
+from workflows.state import State
+
+# pycoingecko is an optional dependency; the agent can still be constructed
+# with an injected data client when it is unavailable.
 try:
     from pycoingecko import CoinGeckoAPI
-except Exception:
+except ImportError:
     CoinGeckoAPI = None
-
-# try to import project's BaseAgent; fallback to a tiny stub so this file remains runnable standalone
-try:
-    from agents.base_agent import BaseAgent
-except Exception:
-    class BaseAgent:
-        """Minimal fallback BaseAgent stub if the real one is not available in the environment."""
-        pass
 
 
 def compute_rsi(series: pd.Series, period: int = 14) -> pd.Series:
@@ -216,10 +205,6 @@ def crypto_agent(state: State) -> State:
     Crypto Analysis Agent for LangGraph workflow.
     Analyzes cryptocurrency markets, technical indicators, and trends.
     """
-    if State is None or get_llm is None:
-        # Fallback if LangGraph is not available
-        return state
-    
     try:
         # Check if any symbols are crypto assets (common crypto symbols)
         crypto_symbols = []
@@ -295,10 +280,12 @@ def crypto_agent(state: State) -> State:
         response = llm.invoke([HumanMessage(content=prompt)])
         state['crypto_analysis'] = response.content if hasattr(response, 'content') else str(response)
         
-    except Exception as e:
-        state['error'] = f"Crypto analysis error: {str(e)}"
-        state['crypto_analysis'] = f"Crypto analysis encountered an error: {str(e)}"
-    
+    except Exception as exc:
+        logging.getLogger(__name__).error("crypto_agent error: %s", exc, exc_info=True)
+        state["error"] = f"crypto_agent error: {exc}"
+        state["crypto_analysis"] = f"Analysis unavailable: {exc}"
+        return state
+
     return state
 
 

@@ -138,7 +138,7 @@ class DataFetcher:
     @staticmethod
     def fetch_stock_data(*args, **kwargs):
         """Fetch stock data with caching"""
-        from src.tools.financial_tools import get_stock_data
+        from tools.financial_tools import get_stock_data
         
         return DataFetcher.fetch_with_cache(
             _stock_cache,
@@ -150,7 +150,7 @@ class DataFetcher:
     @staticmethod
     def fetch_crypto_data(*args, **kwargs):
         """Fetch crypto data with caching"""
-        from src.tools.crypto_data_tools import get_crypto_data
+        from tools.crypto_data_tools import get_crypto_data
         
         return DataFetcher.fetch_with_cache(
             _crypto_cache,
@@ -162,7 +162,7 @@ class DataFetcher:
     @staticmethod
     def fetch_news(*args, **kwargs):
         """Fetch news with caching"""
-        from src.tools.financial_tools import search_financial_news
+        from tools.financial_tools import search_financial_news
         
         return DataFetcher.fetch_with_cache(
             _news_cache,
@@ -182,7 +182,7 @@ class DataFetcher:
         Returns:
             Combined market data for all symbols
         """
-        from src.agents.base_agent import FinancialDataAgent
+        from agents.base_agent import FinancialDataAgent
         
         # Categorize symbols
         agent = FinancialDataAgent()
@@ -258,7 +258,7 @@ class BatchDataFetcher:
         Returns:
             Complete dataset for analysis
         """
-        from src.agents.base_agent import FinancialDataAgent
+        from agents.base_agent import FinancialDataAgent
         
         agent = FinancialDataAgent()
         stock_symbols, crypto_symbols = agent.validate_symbols(symbols)
