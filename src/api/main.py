@@ -2,14 +2,12 @@
 FastAPI Backend for LangGraph Financial Analyst with Gorq LLM
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List, Optional, Dict, Any
 from collections import deque
 import os
 from datetime import datetime
 import time
-import json
 
 from workflows.financial_analysis_workflow import financial_analysis_workflow
 from .models import (
@@ -19,9 +17,7 @@ from .models import (
     HistoryResponse,
     AnalysisStats,
     HealthResponse,
-    APIInfo,
-    ErrorResponse,
-    FinancialAnalysisState
+    APIInfo
 )
 
 # Initialize FastAPI app

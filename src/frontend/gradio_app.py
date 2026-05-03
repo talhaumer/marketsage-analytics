@@ -5,10 +5,8 @@ Advanced Financial Analysis Platform with Multi-Agent AI
 
 import gradio as gr
 import requests
-import json
 import pandas as pd
 from datetime import datetime
-import time
 import os
 import socket
 from dotenv import load_dotenv
@@ -31,7 +29,7 @@ def get_local_ip():
         local_ip = s.getsockname()[0]
         s.close()
         return local_ip
-    except:
+    except OSError:
         return "localhost"
 
 def check_api_health():
@@ -640,7 +638,7 @@ if __name__ == "__main__":
     local_ip = get_local_ip()
     
     print("🚀 Starting MarketSage Analytics Frontend...")
-    print(f"📱 Local Access: http://localhost:7860")
+    print("📱 Local Access: http://localhost:7860")
     print(f"🌐 Network Access: http://{local_ip}:7860")
     print("🔧 Make sure the backend API is running on http://localhost:8000")
     print("=" * 60)

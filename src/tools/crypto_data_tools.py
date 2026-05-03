@@ -202,13 +202,13 @@ def get_crypto_data(symbols: List[str], timeframe: str = "7d") -> Dict[str, Any]
     if tf.endswith("d"):
         try:
             days = int(tf[:-1])
-        except:
+        except ValueError:
             pass
     elif tf.endswith("h"):
         try:
             hours = int(tf[:-1])
             days = max(1, int((hours + 23) / 24))
-        except:
+        except ValueError:
             pass
     
     crypto_data = {}

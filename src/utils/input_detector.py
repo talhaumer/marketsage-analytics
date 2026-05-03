@@ -328,7 +328,7 @@ if __name__ == "__main__":
         
         result = get_analysis_recommendation(test['symbols'], test['question'])
         
-        print(f"\nDetection Result:")
+        print("\nDetection Result:")
         print(f"  Analysis Type: {result['analysis_type']}")
         print(f"  Confidence: {result['confidence']}")
         print(f"  Reasoning: {result['reasoning']}")

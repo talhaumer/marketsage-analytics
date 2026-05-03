@@ -5,17 +5,14 @@ Advanced Financial Analysis Platform with Multi-Agent AI and Interactive Charts
 
 import gradio as gr
 import requests
-import json
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 from datetime import datetime
-import time
 import os
 import socket
 from dotenv import load_dotenv
-import numpy as np
 
 load_dotenv()
 
@@ -34,7 +31,7 @@ def get_local_ip():
         local_ip = s.getsockname()[0]
         s.close()
         return local_ip
-    except:
+    except OSError:
         return "localhost"
 
 def check_api_health():
@@ -231,7 +228,7 @@ def create_portfolio_allocation_chart(symbols):
         )
         
         return fig
-    except Exception as e:
+    except Exception:
         return go.Figure()
 
 def create_sector_performance_chart():
@@ -362,7 +359,7 @@ def create_performance_comparison(symbols, timeframe="1y"):
         )
         
         return fig
-    except Exception as e:
+    except Exception:
         return go.Figure()
 
 def create_volume_chart(symbols, timeframe="1y"):
@@ -410,7 +407,7 @@ def create_volume_chart(symbols, timeframe="1y"):
         fig.update_yaxes(title_text="Volume")
         
         return fig
-    except Exception as e:
+    except Exception:
         return go.Figure()
 
 def run_analysis_with_viz(question, analysis_type, symbols_input, timeframe, risk_tolerance, progress=gr.Progress()):
@@ -487,7 +484,7 @@ def run_analysis_with_viz(question, analysis_type, symbols_input, timeframe, ris
             # Validation error - show details
             try:
                 error_detail = response.json()
-                error_msg = f"❌ **Validation Error:**\n\n"
+                error_msg = "❌ **Validation Error:**\n\n"
                 if 'detail' in error_detail:
                     if isinstance(error_detail['detail'], list):
                         for err in error_detail['detail']:
@@ -496,12 +493,12 @@ def run_analysis_with_viz(question, analysis_type, symbols_input, timeframe, ris
                             error_msg += f"- **{field}**: {msg}\n"
                     else:
                         error_msg += f"{error_detail['detail']}\n"
-                error_msg += f"\n**Tip:** Make sure:\n"
-                error_msg += f"- Question is not empty\n"
-                error_msg += f"- Symbols contain only letters (A-Z)\n"
-                error_msg += f"- Symbols are comma-separated (e.g., AAPL, MSFT)\n"
-            except:
-                error_msg = f"❌ **Validation Error:** Please check your input format"
+                error_msg += "\n**Tip:** Make sure:\n"
+                error_msg += "- Question is not empty\n"
+                error_msg += "- Symbols contain only letters (A-Z)\n"
+                error_msg += "- Symbols are comma-separated (e.g., AAPL, MSFT)\n"
+            except Exception:
+                error_msg = "❌ **Validation Error:** Please check your input format"
             
             empty_fig = go.Figure()
             return (error_msg, empty_fig, empty_fig, empty_fig, empty_fig, empty_fig, empty_fig, empty_fig)
@@ -882,7 +879,7 @@ if __name__ == "__main__":
     local_ip = get_local_ip()
     
     print("🚀 Starting MarketSage Analytics with Visualizations...")
-    print(f"📱 Local Access: http://localhost:7860")
+    print("📱 Local Access: http://localhost:7860")
     print(f"🌐 Network Access: http://{local_ip}:7860")
     print("📊 Features: AI Analysis + Interactive Charts")
     print("=" * 60)
