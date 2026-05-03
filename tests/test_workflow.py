@@ -59,3 +59,21 @@ def test_financial_data_before_risk_and_technical():
     assert ("financial_data", "technical_analysis") in edges
     assert ("market_research", "risk_assessment") not in edges
     assert ("market_research", "technical_analysis") not in edges
+
+
+def test_crypto_only_input_routes_to_crypto_agent():
+    from workflows.smart_router import SmartAnalysisRouter
+    router = SmartAnalysisRouter()
+    state = _make_state(symbols=["BTC", "ETH"], analysis_type="crypto")
+    route = router.route_analysis(state)
+    assert route.get("run_crypto_agent") is True
+    assert route.get("run_sector_agent") is False
+
+
+def test_stock_only_input_skips_crypto_agent():
+    from workflows.smart_router import SmartAnalysisRouter
+    router = SmartAnalysisRouter()
+    state = _make_state(symbols=["AAPL", "MSFT"], analysis_type="quick")
+    route = router.route_analysis(state)
+    assert route.get("run_crypto_agent") is False
+    assert route.get("run_financial_agent") is True

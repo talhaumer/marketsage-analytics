@@ -10,6 +10,7 @@ final_synthesis.
 
 from langgraph.graph import StateGraph, END
 from workflows.state import State
+from workflows.smart_router import SmartAnalysisRouter
 from agents import (
     market_research_agent,
     financial_data_agent,
@@ -23,9 +24,21 @@ from agents import (
 )
 
 
+_router = SmartAnalysisRouter()
+
+
 def _data_prefetch_node(state: State) -> dict:
     from workflows.data_prefetch import prefetch_market_data
     return prefetch_market_data(state)
+
+
+def _route_crypto(state: State) -> str:
+    """Route between crypto_analysis and skipping straight to final_synthesis."""
+    try:
+        routing = _router.route_analysis(state)
+        return "crypto_analysis" if routing.get("run_crypto_agent", True) else "final_synthesis"
+    except Exception:
+        return "crypto_analysis"
 
 
 def create_financial_analysis_workflow() -> StateGraph:
@@ -51,7 +64,12 @@ def create_financial_analysis_workflow() -> StateGraph:
     workflow.add_edge("market_research", "sentiment_analysis")
     workflow.add_edge("market_research", "portfolio_analysis")
     workflow.add_edge("market_research", "sector_analysis")
-    workflow.add_edge("market_research", "crypto_analysis")
+    # crypto_analysis runs only when the symbol set warrants it (smart router)
+    workflow.add_conditional_edges(
+        "market_research",
+        _route_crypto,
+        {"crypto_analysis": "crypto_analysis", "final_synthesis": "final_synthesis"},
+    )
 
     # financial_data gates risk and technical
     workflow.add_edge("financial_data", "technical_analysis")
