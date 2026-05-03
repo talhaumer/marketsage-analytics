@@ -3,6 +3,8 @@ Crypto Data Tools for MarketSage Analytics
 Provides advanced crypto market data connectors and analysis tools
 """
 
+import os
+
 from langchain.tools import tool
 from typing import List, Dict, Any, Optional
 import pandas as pd
@@ -26,7 +28,9 @@ class CryptoDataClient:
     - LunarCrush (placeholder - requires API key)
     """
     
-    def __init__(self, provider: str = "coingecko", api_key: Optional[str] = "CG-u2zrJRYY5ZYt65wpHURxRdAb"):
+    def __init__(self, provider: str = "coingecko", api_key: Optional[str] = None):
+        if api_key is None:
+            api_key = os.environ.get("COINGECKO_API_KEY")
         self.provider = provider.lower()
         self.api_key = api_key
         

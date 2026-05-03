@@ -61,7 +61,10 @@ def get_price_data(symbol, timeframe="1y"):
         if is_crypto_symbol(symbol):
             # Use CryptoDataClient for crypto
             import sys
-            sys.path.insert(0, '/Users/talha.umer/Downloads/MarketSage-Analytics/src')
+            import pathlib as _pl
+            _src_path = _pl.Path(__file__).parent.parent.parent / "src"
+            if str(_src_path) not in sys.path:
+                sys.path.insert(0, str(_src_path))
             from tools.crypto_data_tools import get_crypto_client
             
             # Convert timeframe to days
@@ -884,7 +887,7 @@ if __name__ == "__main__":
     demo.launch(
         server_name="0.0.0.0",
         server_port=7860,
-        share=True,
+        share=False,
         show_error=True
     )
 

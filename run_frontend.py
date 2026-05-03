@@ -59,7 +59,7 @@ if __name__ == "__main__":
         demo.launch(
             server_name="0.0.0.0",  # Allow access from any IP
             server_port=7860,
-            share=True,  # Create public link
+            share=False,  # Create public link
             show_error=True
         )
     except ImportError as e:
