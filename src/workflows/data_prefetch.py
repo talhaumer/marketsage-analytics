@@ -13,13 +13,8 @@ def prefetch_market_data(state: Dict[str, Any]) -> Dict[str, Any]:
     if not symbols:
         return {"shared_market_data": {}}
 
-    try:
-        from utils.crypto_symbols import CRYPTO_SYMBOLS
-    except ImportError:
-        CRYPTO_SYMBOLS = frozenset({"BTC", "ETH", "USDT", "BNB", "SOL", "XRP", "ADA", "DOGE"})
-
-    stock_syms = [s for s in symbols if s.upper() not in CRYPTO_SYMBOLS]
-    crypto_syms = [s for s in symbols if s.upper() in CRYPTO_SYMBOLS]
+    from utils.crypto_symbols import split_symbols
+    stock_syms, crypto_syms = split_symbols(symbols)
 
     shared: Dict[str, Any] = {}
 

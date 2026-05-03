@@ -49,3 +49,17 @@ def test_get_llm_returns_without_key(monkeypatch):
     from tools.groq_llm import get_llm
     llm = get_llm()
     assert llm is not None
+
+
+def test_crypto_symbols_is_frozenset():
+    from utils.crypto_symbols import CRYPTO_SYMBOLS
+    assert isinstance(CRYPTO_SYMBOLS, frozenset)
+    assert "BTC" in CRYPTO_SYMBOLS
+    assert "AAPL" not in CRYPTO_SYMBOLS
+
+
+def test_split_symbols():
+    from utils.crypto_symbols import split_symbols
+    stocks, cryptos = split_symbols(["AAPL", "BTC", "MSFT", "ETH"])
+    assert set(stocks) == {"AAPL", "MSFT"}
+    assert set(cryptos) == {"BTC", "ETH"}

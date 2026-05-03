@@ -10,16 +10,13 @@ import numpy as np
 from duckduckgo_search import DDGS
 from datetime import datetime
 
-# Crypto detection
-CRYPTO_SYMBOLS = [
-    'BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'MATIC', 'DOT', 
-    'AVAX', 'LINK', 'UNI', 'ATOM', 'LTC', 'ETC', 'FIL', 'NEAR', 'ALGO',
-    'USDT', 'USDC', 'SHIB', 'TRX', 'DAI', 'WBTC', 'LEO', 'PEPE'
-]
+# Crypto detection - use single source of truth
+from utils.crypto_symbols import is_crypto, CRYPTO_SYMBOLS  # noqa: F401
+
 
 def is_crypto_symbol(symbol: str) -> bool:
     """Check if symbol is a cryptocurrency"""
-    return symbol.upper() in CRYPTO_SYMBOLS
+    return is_crypto(symbol)
 
 def get_price_history(symbol: str, timeframe: str) -> pd.DataFrame:
     """Get price history from appropriate source (crypto or stock)"""

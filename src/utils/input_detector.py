@@ -6,79 +6,20 @@ Automatically detects whether user input requires Yahoo Finance (stocks) or cryp
 from typing import Dict, List, Tuple, Any
 import re
 
+from utils.crypto_symbols import CRYPTO_SYMBOLS as _CANONICAL_CRYPTO_SYMBOLS
+
 
 class InputDetector:
     """
     Intelligent detector for determining analysis type based on user input
-    
+
     Two detection strategies:
     1. Symbol-based detection (recommended for accuracy)
     2. Context-based detection (uses question text)
     """
-    
-    # Comprehensive crypto symbol database
-    CRYPTO_SYMBOLS = {
-        # Top 20 by market cap
-        'BTC', 'BITCOIN',
-        'ETH', 'ETHEREUM',
-        'USDT', 'TETHER',
-        'BNB', 'BINANCE',
-        'SOL', 'SOLANA',
-        'XRP', 'RIPPLE',
-        'USDC',
-        'ADA', 'CARDANO',
-        'AVAX', 'AVALANCHE',
-        'DOGE', 'DOGECOIN',
-        'TRX', 'TRON',
-        'DOT', 'POLKADOT',
-        'MATIC', 'POLYGON',
-        'LINK', 'CHAINLINK',
-        'TON',
-        'WBTC',
-        'DAI',
-        'SHIB',
-        'LTC', 'LITECOIN',
-        'BCH', 'BITCOIN CASH',
-        
-        # DeFi
-        'UNI', 'UNISWAP',
-        'AAVE',
-        'MKR', 'MAKER',
-        'COMP', 'COMPOUND',
-        'SNX', 'SYNTHETIX',
-        'CRV', 'CURVE',
-        'SUSHI', 'SUSHISWAP',
-        'YFI',
-        '1INCH',
-        
-        # Layer 2
-        'ARB', 'ARBITRUM',
-        'OP', 'OPTIMISM',
-        'IMX', 'IMMUTABLE',
-        'LRC', 'LOOPRING',
-        'METIS',
-        
-        # Popular altcoins
-        'ATOM', 'COSMOS',
-        'XLM', 'STELLAR',
-        'ETC', 'ETHEREUM CLASSIC',
-        'FIL', 'FILECOIN',
-        'NEAR',
-        'ALGO', 'ALGORAND',
-        'VET', 'VECHAIN',
-        'ICP', 'INTERNET COMPUTER',
-        'APT', 'APTOS',
-        'HBAR', 'HEDERA',
-        'QNT', 'QUANT',
-        'LDO', 'LIDO',
-        'APE', 'APECOIN',
-        'SAND', 'SANDBOX',
-        'MANA', 'DECENTRALAND',
-        'AXS', 'AXIE',
-        'GALA',
-        'CHZ', 'CHILIZ',
-        'ENJ', 'ENJIN'
-    }
+
+    # Crypto symbols sourced from utils.crypto_symbols (single source of truth)
+    CRYPTO_SYMBOLS = _CANONICAL_CRYPTO_SYMBOLS
     
     # Crypto-related keywords for context detection
     CRYPTO_KEYWORDS = {

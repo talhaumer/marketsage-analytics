@@ -50,10 +50,13 @@ def check_api_health():
 
 def is_crypto_symbol(symbol):
     """Check if symbol is a cryptocurrency"""
-    crypto_symbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'MATIC', 'DOT', 
-                     'AVAX', 'LINK', 'UNI', 'ATOM', 'LTC', 'ETC', 'FIL', 'NEAR', 'ALGO',
-                     'USDT', 'USDC', 'SHIB', 'TRX', 'DAI', 'WBTC', 'LEO', 'PEPE']
-    return symbol.upper() in crypto_symbols
+    import sys
+    import pathlib as _pl
+    _src_path = _pl.Path(__file__).parent.parent.parent / "src"
+    if str(_src_path) not in sys.path:
+        sys.path.insert(0, str(_src_path))
+    from utils.crypto_symbols import is_crypto
+    return is_crypto(symbol)
 
 def get_price_data(symbol, timeframe="1y"):
     """Get price data from appropriate source (crypto or stock)"""

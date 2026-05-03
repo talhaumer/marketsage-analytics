@@ -206,18 +206,11 @@ def crypto_agent(state: State) -> State:
     Analyzes cryptocurrency markets, technical indicators, and trends.
     """
     try:
-        # Check if any symbols are crypto assets (common crypto symbols)
-        crypto_symbols = []
-        stock_symbols = []
-        
-        common_crypto = {'BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 'MATIC', 'DOT', 
-                        'AVAX', 'LINK', 'UNI', 'ATOM', 'LTC', 'ETC', 'FIL', 'NEAR', 'ALGO'}
-        
-        for symbol in state.get('symbols', []):
-            if symbol.upper() in common_crypto:
-                crypto_symbols.append(symbol.upper())
-            else:
-                stock_symbols.append(symbol)
+        # Check if any symbols are crypto assets (single source of truth)
+        from utils.crypto_symbols import split_symbols
+        stock_symbols, crypto_symbols = split_symbols(
+            [s.upper() for s in state.get('symbols', [])]
+        )
         
         # If no crypto symbols detected, provide a brief note
         if not crypto_symbols:

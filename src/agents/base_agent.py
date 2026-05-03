@@ -95,23 +95,9 @@ class FinancialDataAgent(BaseAgent):
     
     def validate_symbols(self, symbols: List[str]) -> tuple[List[str], List[str]]:
         """Validate and categorize symbols (stocks vs crypto)"""
-        stock_symbols = []
-        crypto_symbols = []
-        
-        # Common crypto symbols
-        common_crypto = {
-            'BTC', 'ETH', 'USDT', 'BNB', 'SOL', 'XRP', 'ADA', 'DOGE', 
-            'MATIC', 'DOT', 'AVAX', 'LINK', 'UNI', 'ATOM', 'LTC', 'ETC',
-            'FIL', 'NEAR', 'ALGO', 'AAVE', 'MKR', 'SNX', 'COMP'
-        }
-        
-        for symbol in symbols:
-            if symbol.upper() in common_crypto:
-                crypto_symbols.append(symbol.upper())
-            else:
-                stock_symbols.append(symbol.upper())
-        
-        return stock_symbols, crypto_symbols
+        from utils.crypto_symbols import split_symbols
+        stocks, cryptos = split_symbols([s.upper() for s in symbols])
+        return stocks, cryptos
 
 
 class AnalysisAgent(BaseAgent):
