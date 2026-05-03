@@ -6,9 +6,8 @@ Provides portfolio optimization recommendations, allocation strategies, and perf
 from langchain_core.messages import HumanMessage
 from typing import Dict, Any, List
 import json
-from tools.gorq_llm import get_llm
+from tools.groq_llm import get_llm
 from tools.financial_tools import calculate_portfolio_metrics
-from api.models import FinancialAnalysisState
 from workflows.state import State
 
 

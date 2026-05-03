@@ -5,8 +5,7 @@ Combines all analyses into a comprehensive executive report with actionable reco
 
 from langchain_core.messages import HumanMessage
 from typing import Dict, Any, List
-from tools.gorq_llm import get_llm
-from api.models import FinancialAnalysisState
+from tools.groq_llm import get_llm
 from workflows.state import State
 
 

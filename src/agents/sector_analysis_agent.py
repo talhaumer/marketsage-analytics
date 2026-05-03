@@ -6,9 +6,8 @@ Analyzes sector performance, trends, and provides sector allocation recommendati
 from langchain_core.messages import HumanMessage
 from typing import Dict, Any, List
 import json
-from tools.gorq_llm import get_llm
+from tools.groq_llm import get_llm
 from tools.financial_tools import analyze_sector_performance
-from api.models import FinancialAnalysisState
 from workflows.state import State
 
 

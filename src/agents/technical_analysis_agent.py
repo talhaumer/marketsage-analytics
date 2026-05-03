@@ -6,8 +6,7 @@ Provides technical analysis, trading signals, and chart pattern analysis.
 from langchain_core.messages import HumanMessage
 from typing import Dict, Any, List
 import json
-from tools.gorq_llm import get_llm
-from api.models import FinancialAnalysisState
+from tools.groq_llm import get_llm
 from workflows.state import State
 
 

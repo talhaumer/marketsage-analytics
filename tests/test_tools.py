@@ -33,3 +33,19 @@ def test_tool_invoke_uses_dict_not_positional():
                     and len(node.args) > 1):
                 bad_calls.append(f"{path.name}:{node.lineno}")
     assert not bad_calls, f"Wrong .invoke() positional calls: {bad_calls}"
+
+
+def test_mock_llm_returns_ai_message():
+    from tools.groq_llm import MockLLM
+    from langchain_core.messages import HumanMessage
+    llm = MockLLM()
+    result = llm.invoke([HumanMessage(content="Tell me about AAPL")])
+    assert hasattr(result, "content")
+    assert isinstance(result.content, str)
+
+
+def test_get_llm_returns_without_key(monkeypatch):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    from tools.groq_llm import get_llm
+    llm = get_llm()
+    assert llm is not None

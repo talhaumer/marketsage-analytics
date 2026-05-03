@@ -21,7 +21,7 @@ import json
 # LangGraph integration
 from langchain_core.messages import HumanMessage
 try:
-    from tools.gorq_llm import get_llm
+    from tools.groq_llm import get_llm
     from workflows.state import State
 except:
     State = None

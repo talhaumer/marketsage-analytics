@@ -21,7 +21,7 @@ class BaseAgent(ABC):
     def get_llm(self):
         """Lazy load LLM to avoid circular imports"""
         if self.llm is None:
-            from src.tools.gorq_llm import get_llm
+            from tools.groq_llm import get_llm
             self.llm = get_llm()
         return self.llm
     

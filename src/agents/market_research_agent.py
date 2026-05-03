@@ -5,9 +5,8 @@ Analyzes market trends, news, and provides comprehensive market research insight
 
 from langchain_core.messages import HumanMessage
 from typing import Dict, Any, List
-from tools.gorq_llm import get_llm
+from tools.groq_llm import get_llm
 from tools.financial_tools import search_financial_news
-from api.models import FinancialAnalysisState
 from workflows.state import State
 
 
