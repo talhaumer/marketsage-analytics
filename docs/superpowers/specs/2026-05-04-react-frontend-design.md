@@ -30,7 +30,7 @@
 
 ## File Structure
 
-New directory: `src/frontend_react/` — coexists with existing Gradio files, nothing deleted.
+New directory: `src/frontend_react/`. The existing Gradio frontend files are deleted: `src/frontend/gradio_app.py`, `src/frontend/gradio_app_with_viz.py`, `run_frontend.py`, `run_frontend_with_viz.sh`.
 
 ```
 src/frontend_react/
@@ -186,13 +186,13 @@ npm install
 npm run dev    # → http://localhost:5173
 ```
 
-Backend must be running at `http://localhost:8000`. Both run simultaneously. The Gradio frontend (`python run_frontend.py`) continues to work as before — nothing removed.
+Backend must be running at `http://localhost:8000`.
 
-Add to `CLAUDE.md` under Development Workflows:
+Update `CLAUDE.md` under Development Workflows — replace Gradio frontend instructions with:
 
 ```powershell
-# Terminal 3 — React frontend (new)
-cd src/frontend_react && npm run dev
+# Terminal 2 — React frontend
+cd src/frontend_react && npm run dev   # → http://localhost:5173
 ```
 
 ---
