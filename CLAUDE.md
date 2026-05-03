@@ -248,6 +248,30 @@ Use `env.example` as the template. Never commit `.env`.
 
 ---
 
+## Development Workflow
+
+Follow this process strictly when analyzing, debugging, or improving code.
+
+**1. Understanding phase** — do NOT write any code yet. Analyze the relevant code and explain: what it does, architecture and key components, data flow and dependencies, potential problem areas.
+
+**2. Problem identification** — identify bugs, inefficiencies, and bad practices. Highlight logical errors, performance issues, security risks, and code smells / anti-patterns.
+
+**3. Clarification** — ask any necessary questions before proceeding. Do not assume missing requirements.
+
+**4. Design fix plan** — propose a clear, step-by-step fix plan. Keep steps small and actionable. Follow DRY, YAGNI, and simplicity over complexity.
+
+**5. Test-driven development** — for each fix: write a failing test first (RED), then implement minimal code to pass (GREEN), then refactor (REFACTOR).
+
+**6. Implementation** — make changes in small steps. Show exact file paths and code changes. Do NOT modify unrelated code.
+
+**7. Verification** — explain how each fix was validated. Ensure no regressions introduced.
+
+**8. Self-review** — review your own changes critically. Flag any risks or remaining improvements.
+
+**Rules:** Never jump directly into coding. Always explain reasoning. Prefer minimal, clean solutions. If unsure, ask before acting.
+
+---
+
 ## Coding Rules
 
 - Follow existing module structure — agents in `src/agents/`, tools in `src/tools/`, workflow logic in `src/workflows/`, request/response shapes in `src/api/models.py`.
@@ -271,6 +295,12 @@ Use `env.example` as the template. Never commit `.env`.
 - Never add the "Generated with Claude Code" footer.
 - Never use `--author` to override the configured git user.
 - The configured git user (`talhaumer`) is the only author that should appear in `git log`.
+
+**Atomic changes:**
+
+- Every commit must represent one complete, self-contained logical change — the codebase must be in a working state before and after.
+- Never bundle unrelated changes (e.g., a bug fix + a refactor + a new feature) into a single commit.
+- If a change requires updating tests, docs, or config, include those in the same commit as the code change — not as a follow-up.
 
 **Commit style:**
 
@@ -301,6 +331,36 @@ Use `env.example` as the template. Never commit `.env`.
 - Treat `GROQ_API_KEY`, `OPENAI_API_KEY`, and `COINGECKO_API_KEY` as secrets.
 - Validate all user-supplied symbols and timeframes before passing to data fetchers.
 - Sanitize any user-provided strings injected into LLM prompts.
+
+---
+
+## Subagent Model Selection
+
+This rule overrides the model-selection guidance in `superpowers:subagent-driven-development`.
+
+**Default: always dispatch subagents with `model: opus`.**
+
+Downgrade is permitted ONLY if the task falls entirely within one of these categories. If a task spans multiple categories or is ambiguous, use opus.
+
+### Permitted `haiku` tasks
+
+- Pure lookup: grep/glob searches, listing files, extracting a specific value from a known file.
+- Mechanical single-file edits with a precise spec: rename a symbol, apply an exact find/replace, reformat.
+
+### Permitted `sonnet` tasks
+
+- Documentation writing/updating: README, docstrings, inline comments, changelog entries, commit messages, PR descriptions.
+- Mechanical multi-file refactors where the pattern is fully specified (e.g. "apply this same change across these 12 files").
+
+### Always use `opus`
+
+- Design, architecture, or planning work.
+- Debugging, root-cause analysis, test failures.
+- Code review (spec compliance, quality, security).
+- Multi-file integration where the subagent must make judgment calls.
+- Anything ambiguous, underspecified, or novel.
+
+When in doubt: opus. Never downgrade to save cost if the task could plausibly need judgment.
 
 ---
 
