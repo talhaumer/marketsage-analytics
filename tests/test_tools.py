@@ -91,3 +91,21 @@ def test_build_prompt_contains_role():
     assert "market analyst" in prompt
     assert "AAPL" in prompt
     assert "Trend" in prompt
+
+
+def test_symbol_map_loads_only_once(monkeypatch):
+    from tools import crypto_data_tools
+    call_count = {"n": 0}
+
+    def counting_load(self):
+        call_count["n"] += 1
+        return {}
+
+    monkeypatch.setattr(crypto_data_tools.CryptoDataClient, "_load_symbol_map", counting_load)
+    # Reset module-level cache so the test starts clean
+    crypto_data_tools._SYMBOL_MAP_CACHE = {}
+    crypto_data_tools._SYMBOL_MAP_LOADED_AT = 0.0
+    client = crypto_data_tools.CryptoDataClient()
+    _ = client._symbol_map
+    _ = client._symbol_map
+    assert call_count["n"] <= 1, "Symbol map should only be loaded once"

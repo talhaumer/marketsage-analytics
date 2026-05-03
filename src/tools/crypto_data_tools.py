@@ -4,6 +4,7 @@ Provides advanced crypto market data connectors and analysis tools
 """
 
 import os
+import time as _time
 
 from langchain.tools import tool
 from typing import List, Dict, Any, Optional
@@ -16,6 +17,14 @@ try:
     from pycoingecko import CoinGeckoAPI
 except ImportError:
     CoinGeckoAPI = None
+
+
+# Module-level TTL cache for the CoinGecko symbol -> id map.
+# CoinGecko's coin list rarely changes; cache for 1 hour to avoid the
+# multi-second cold-start API hit on every CryptoDataClient instance.
+_SYMBOL_MAP_CACHE: dict = {}
+_SYMBOL_MAP_LOADED_AT: float = 0.0
+_SYMBOL_MAP_TTL: float = 3600.0
 
 
 class CryptoDataClient:
@@ -38,44 +47,51 @@ class CryptoDataClient:
             if CoinGeckoAPI is None:
                 raise ImportError("pycoingecko is required. Install via `pip install pycoingecko`")
             self.client = CoinGeckoAPI()
-            self._symbol_map: Optional[Dict[str, str]] = None
         else:
             # Placeholder for other providers
             self.client = None
-    
-    def _load_symbol_map(self):
-        """Load CoinGecko symbol to ID mapping"""
-        if self._symbol_map is not None:
-            return
-        
-        if self.provider == "coingecko" and self.client:
-            coins = self.client.get_coins_list()
-            self._symbol_map = {}
-            for c in coins:
-                sym = c.get("symbol", "").upper()
-                id_ = c.get("id")
-                if sym and id_:
-                    if sym not in self._symbol_map:
-                        self._symbol_map[sym] = id_
-            
-            # Common fallbacks
-            self._symbol_map.update({
-                "BTC": "bitcoin",
-                "ETH": "ethereum",
-                "USDT": "tether",
-                "BNB": "binancecoin",
-                "SOL": "solana",
-                "XRP": "ripple",
-                "ADA": "cardano",
-                "DOGE": "dogecoin",
-                "MATIC": "matic-network",
-                "DOT": "polkadot"
-            })
-    
+
+    @property
+    def _symbol_map(self) -> dict:
+        """Lazy-loaded, module-cached symbol -> CoinGecko id mapping (1h TTL)."""
+        global _SYMBOL_MAP_CACHE, _SYMBOL_MAP_LOADED_AT
+        if _time.time() - _SYMBOL_MAP_LOADED_AT > _SYMBOL_MAP_TTL:
+            loaded = self._load_symbol_map()
+            _SYMBOL_MAP_CACHE = loaded if loaded is not None else {}
+            _SYMBOL_MAP_LOADED_AT = _time.time()
+        return _SYMBOL_MAP_CACHE
+
+    def _load_symbol_map(self) -> dict:
+        """Fetch CoinGecko coin list and build symbol -> id mapping."""
+        if self.provider != "coingecko" or not self.client:
+            return {}
+
+        coins = self.client.get_coins_list()
+        symbol_map: Dict[str, str] = {}
+        for c in coins:
+            sym = c.get("symbol", "").upper()
+            id_ = c.get("id")
+            if sym and id_ and sym not in symbol_map:
+                symbol_map[sym] = id_
+
+        # Common fallbacks (preferred IDs override generic first-match)
+        symbol_map.update({
+            "BTC": "bitcoin",
+            "ETH": "ethereum",
+            "USDT": "tether",
+            "BNB": "binancecoin",
+            "SOL": "solana",
+            "XRP": "ripple",
+            "ADA": "cardano",
+            "DOGE": "dogecoin",
+            "MATIC": "matic-network",
+            "DOT": "polkadot",
+        })
+        return symbol_map
+
     def symbol_to_id(self, symbol: str) -> str:
         """Convert symbol to provider-specific ID"""
         if self.provider == "coingecko":
-            self._load_symbol_map()
             return self._symbol_map.get(symbol.upper(), symbol.lower())
         return symbol.lower()
     
