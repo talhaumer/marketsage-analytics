@@ -3,11 +3,15 @@ Pydantic Models for MarketSage Analytics API
 This module contains all the data models used for request/response validation
 """
 
-from pydantic import BaseModel, Field, validator
+import re as _re
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from typing import List, Optional, Dict, Any, Union, TypedDict, Annotated
 from datetime import datetime
 from enum import Enum
 import operator
+
+
+_SYMBOL_PATTERN = _re.compile(r'^[A-Za-z0-9.]{1,10}$')
 
 
 class AnalysisType(str, Enum):
@@ -18,6 +22,7 @@ class AnalysisType(str, Enum):
     RISK = "risk"
     SENTIMENT = "sentiment"
     PORTFOLIO = "portfolio"
+    CRYPTO = "crypto"
 
 
 class RiskTolerance(str, Enum):
@@ -46,96 +51,108 @@ class AnalysisRequest(BaseModel):
     """Request model for financial analysis"""
     question: str = Field(..., min_length=1, max_length=1000, description="The financial question to analyze")
     analysis_type: AnalysisType = Field(default=AnalysisType.COMPREHENSIVE, description="Type of analysis to perform")
-    symbols: List[str] = Field(default=[], max_items=20, description="Stock symbols to analyze")
+    symbols: List[str] = Field(default=[], max_length=20, description="Stock symbols to analyze")
     timeframe: Timeframe = Field(default=Timeframe.ONE_YEAR, description="Time period for analysis")
     risk_tolerance: Optional[RiskTolerance] = Field(default=RiskTolerance.MODERATE, description="Risk tolerance level")
 
-    @validator('symbols')
-    def validate_symbols(cls, v):
-        """Validate stock symbols format"""
-        if not v:
-            return v
-        
-        for symbol in v:
-            if not symbol or not symbol.strip():
-                raise ValueError("Symbols cannot be empty")
-            if len(symbol.strip()) > 10:
-                raise ValueError(f"Symbol {symbol} is too long (max 10 characters)")
-            if not symbol.strip().isalpha():
-                raise ValueError(f"Symbol {symbol} contains invalid characters")
-        
-        return [s.strip().upper() for s in v]
-
-    @validator('question')
-    def validate_question(cls, v):
-        """Validate question content"""
-        if not v or not v.strip():
-            raise ValueError("Question cannot be empty")
-        return v.strip()
-
-    class Config:
-        use_enum_values = True
-        json_schema_extra = {
+    model_config = ConfigDict(
+        use_enum_values=True,
+        json_schema_extra={
             "example": {
                 "question": "What's the market outlook for AI and technology stocks?",
                 "analysis_type": "comprehensive",
                 "symbols": ["AAPL", "MSFT", "GOOGL"],
                 "timeframe": "1y",
-                "risk_tolerance": "moderate"
+                "risk_tolerance": "moderate",
             }
-        }
+        },
+    )
+
+    @field_validator('symbols', mode='before')
+    @classmethod
+    def validate_symbols(cls, v):
+        """Validate stock symbols format - allows alphanumeric and dots"""
+        if v is None:
+            return []
+        if not isinstance(v, list):
+            raise ValueError("symbols must be a list")
+        validated = []
+        for symbol in v:
+            symbol = str(symbol).strip().upper()
+            if not symbol:
+                raise ValueError("Symbols cannot be empty")
+            if not _SYMBOL_PATTERN.match(symbol):
+                raise ValueError(
+                    f"Symbol '{symbol}' must be 1-10 alphanumeric characters (dots allowed)"
+                )
+            validated.append(symbol)
+        return validated
+
+    @field_validator('question', mode='before')
+    @classmethod
+    def validate_question(cls, v):
+        """Validate question content"""
+        if v is None or not str(v).strip():
+            raise ValueError("Question cannot be empty")
+        return str(v).strip()
 
 
 class PortfolioRequest(BaseModel):
     """Request model for portfolio analysis"""
-    symbols: List[str] = Field(..., min_items=1, max_items=50, description="Stock symbols in the portfolio")
+    symbols: List[str] = Field(..., min_length=1, max_length=50, description="Stock symbols in the portfolio")
     weights: Optional[List[float]] = Field(default=None, description="Portfolio weights for each symbol")
     risk_tolerance: Optional[RiskTolerance] = Field(default=RiskTolerance.MODERATE, description="Risk tolerance level")
 
-    @validator('symbols')
+    model_config = ConfigDict(
+        use_enum_values=True,
+        json_schema_extra={
+            "example": {
+                "symbols": ["AAPL", "MSFT", "GOOGL", "TSLA", "NVDA"],
+                "weights": [0.2, 0.2, 0.2, 0.2, 0.2],
+                "risk_tolerance": "moderate",
+            }
+        },
+    )
+
+    @field_validator('symbols', mode='before')
+    @classmethod
     def validate_symbols(cls, v):
         """Validate stock symbols format"""
         if not v:
             raise ValueError("At least one symbol is required")
-        
+        if not isinstance(v, list):
+            raise ValueError("symbols must be a list")
+        validated = []
         for symbol in v:
-            if not symbol or not symbol.strip():
+            symbol = str(symbol).strip().upper()
+            if not symbol:
                 raise ValueError("Symbols cannot be empty")
-            if len(symbol.strip()) > 10:
-                raise ValueError(f"Symbol {symbol} is too long (max 10 characters)")
-            if not symbol.strip().isalpha():
-                raise ValueError(f"Symbol {symbol} contains invalid characters")
-        
-        return [s.strip().upper() for s in v]
+            if not _SYMBOL_PATTERN.match(symbol):
+                raise ValueError(
+                    f"Symbol '{symbol}' must be 1-10 alphanumeric characters (dots allowed)"
+                )
+            validated.append(symbol)
+        return validated
 
-    @validator('weights')
-    def validate_weights(cls, v, values):
+    @field_validator('weights')
+    @classmethod
+    def validate_weights(cls, v, info):
         """Validate portfolio weights"""
         if v is None:
             return v
-        
-        symbols = values.get('symbols', [])
+
+        symbols = info.data.get('symbols', [])
         if len(v) != len(symbols):
             raise ValueError("Number of weights must match number of symbols")
-        
+
         if not all(0 <= weight <= 1 for weight in v):
             raise ValueError("All weights must be between 0 and 1")
-        
+
         total_weight = sum(v)
         if abs(total_weight - 1.0) > 0.01:  # Allow small floating point errors
             raise ValueError(f"Total weights must equal 1.0, got {total_weight}")
-        
-        return v
 
-    class Config:
-        use_enum_values = True
-        json_schema_extra = {
-            "example": {
-                "symbols": ["AAPL", "MSFT", "GOOGL", "TSLA", "NVDA"],
-                "weights": [0.2, 0.2, 0.2, 0.2, 0.2],
-                "risk_tolerance": "moderate"
-            }
-        }
+        return v
 
 
 class AnalysisMetadata(BaseModel):
@@ -147,7 +164,7 @@ class AnalysisMetadata(BaseModel):
     timestamp: str = Field(..., description="Analysis timestamp")
     query_id: int = Field(..., description="Unique query identifier")
     framework: str = Field(default="LangGraph", description="Framework used")
-    llm: str = Field(default="Gorq", description="LLM used")
+    llm: str = Field(default="Groq", description="LLM used")
     processing_time: Optional[float] = Field(default=None, description="Processing time in seconds")
 
 
@@ -160,6 +177,8 @@ class IndividualAnalyses(BaseModel):
     sentiment_analysis: Optional[str] = Field(default=None, description="Sentiment analysis")
     portfolio_analysis: Optional[str] = Field(default=None, description="Portfolio analysis")
     sector_analysis: Optional[str] = Field(default=None, description="Sector analysis")
+    crypto_analysis: Optional[str] = Field(default=None, description="Crypto analysis")
+    detection_info: Optional[Dict[str, Any]] = Field(default=None, description="Smart routing detection details")
 
 
 class AnalysisData(BaseModel):
@@ -176,8 +195,8 @@ class AnalysisResponse(BaseModel):
     error: Optional[str] = Field(default=None, description="Error message if analysis failed")
     processing_time: Optional[float] = Field(default=None, description="Total processing time in seconds")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "success": True,
                 "data": {
@@ -190,13 +209,14 @@ class AnalysisResponse(BaseModel):
                         "timestamp": "2024-01-01T12:00:00",
                         "query_id": 1,
                         "framework": "LangGraph",
-                        "llm": "Gorq",
-                        "processing_time": 45.2
-                    }
+                        "llm": "Groq",
+                        "processing_time": 45.2,
+                    },
                 },
-                "processing_time": 45.2
+                "processing_time": 45.2,
             }
         }
+    )
 
 
 class QueryRecord(BaseModel):
@@ -231,16 +251,17 @@ class HealthResponse(BaseModel):
     llm: str = Field(..., description="LLM name")
     version: str = Field(..., description="API version")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "status": "healthy",
                 "timestamp": "2024-01-01T12:00:00",
                 "framework": "LangGraph",
-                "llm": "Gorq",
-                "version": "1.0.0"
+                "llm": "Groq",
+                "version": "1.0.0",
             }
         }
+    )
 
 
 class APIInfo(BaseModel):
@@ -250,20 +271,21 @@ class APIInfo(BaseModel):
     framework: str = Field(..., description="Framework name")
     endpoints: Dict[str, str] = Field(..., description="Available endpoints")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "message": "LangGraph Financial Analyst API",
                 "version": "1.0.0",
-                "framework": "LangGraph + Gorq LLM",
+                "framework": "LangGraph + Groq LLM",
                 "endpoints": {
                     "/analyze": "Main financial analysis endpoint",
                     "/portfolio": "Portfolio analysis endpoint",
                     "/health": "Health check endpoint",
-                    "/history": "Query history endpoint"
-                }
+                    "/history": "Query history endpoint",
+                },
             }
         }
+    )
 
 
 class ErrorResponse(BaseModel):
@@ -272,14 +294,15 @@ class ErrorResponse(BaseModel):
     detail: Optional[str] = Field(default=None, description="Additional error details")
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat(), description="Error timestamp")
 
-    class Config:
-        json_schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "error": "Analysis failed",
                 "detail": "Invalid symbols provided",
-                "timestamp": "2024-01-01T12:00:00"
+                "timestamp": "2024-01-01T12:00:00",
             }
         }
+    )
 
 
 # Workflow State Models
@@ -291,7 +314,7 @@ class FinancialAnalysisState(TypedDict):
     symbols: List[str]
     timeframe: str
     risk_tolerance: Optional[str]
-    
+
     # Agent outputs
     market_research: Optional[str]
     financial_data: Optional[Dict[str, Any]]
@@ -300,11 +323,12 @@ class FinancialAnalysisState(TypedDict):
     sentiment_analysis: Optional[str]
     portfolio_analysis: Optional[str]
     sector_analysis: Optional[str]
-    
+    crypto_analysis: Optional[str]
+
     # Final output
     final_analysis: Optional[str]
     error: Optional[str]
-    
+
     # Metadata
     timestamp: str
     processing_time: Optional[float]

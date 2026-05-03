@@ -5,6 +5,7 @@ FastAPI Backend for LangGraph Financial Analyst with Gorq LLM
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List, Optional, Dict, Any
+from collections import deque
 import os
 from datetime import datetime
 import time
@@ -45,8 +46,8 @@ app.add_middleware(
 
 # Models are now imported from models.py
 
-# In-memory storage for demo purposes
-query_history = []
+# In-memory storage for demo purposes (capped at 100 entries)
+query_history: deque = deque(maxlen=100)
 analysis_cache = {}
 
 @app.get("/", response_model=APIInfo)
@@ -130,11 +131,7 @@ async def analyze_financial_data(request: AnalysisRequest):
             "response_length": len(result.get('final_analysis', ''))
         }
         query_history.append(query_record)
-        
-        # Keep only last 100 queries
-        if len(query_history) > 100:
-            query_history.pop(0)
-        
+
         # Prepare response data
         response_data = {
             "final_analysis": result.get('final_analysis', ''),
@@ -275,7 +272,7 @@ async def get_query_history():
     
     # Convert dict records to QueryRecord models
     history_records = []
-    for record in query_history[-20:]:  # Return last 20 queries
+    for record in list(query_history)[-20:]:  # Return last 20 queries
         history_records.append(QueryRecord(**record))
     
     return HistoryResponse(
