@@ -380,7 +380,7 @@ def calculate_crypto_portfolio_metrics(symbols: List[str], weights: Optional[Lis
     
     try:
         # Get crypto data
-        crypto_data = get_crypto_data.invoke(symbols, "30d")
+        crypto_data = get_crypto_data.invoke({"symbols": symbols, "timeframe": "30d"})
         
         portfolio_metrics = {
             "symbols": symbols,

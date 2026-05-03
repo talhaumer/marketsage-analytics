@@ -107,10 +107,16 @@ def get_stock_data(symbols: List[str], timeframe: str = "1y") -> Dict[str, Any]:
                 # RSI calculation
                 if len(hist) >= 14:
                     delta = hist['Close'].diff()
-                    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
-                    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
-                    rs = gain / loss
-                    technical_indicators['rsi'] = 100 - (100 / (1 + rs.iloc[-1]))
+                    gain = (delta.where(delta > 0, 0)).rolling(window=14).mean().iloc[-1]
+                    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean().iloc[-1]
+                    if loss == 0:
+                        rsi = 100.0
+                    elif gain == 0:
+                        rsi = 0.0
+                    else:
+                        rs = gain / loss
+                        rsi = 100 - (100 / (1 + rs))
+                    technical_indicators['rsi'] = rsi
                 
                 # MACD
                 if len(hist) >= 26:
@@ -224,7 +230,7 @@ def calculate_portfolio_metrics(symbols: List[str], weights: Optional[List[float
     
     try:
         # Get stock data
-        stock_data = get_stock_data.invoke(symbols, "1y")
+        stock_data = get_stock_data.invoke({"symbols": symbols, "timeframe": "1y"})
         
         portfolio_metrics = {
             'symbols': symbols,
@@ -416,7 +422,7 @@ def get_market_sentiment(symbols: List[str]) -> Dict[str, Any]:
         
         # Search for news for each symbol
         for symbol in symbols:
-            news_articles = search_financial_news.invoke(f"{symbol} stock news", max_results=5)
+            news_articles = search_financial_news.invoke({"query": f"{symbol} stock news", "max_results": 5})
             
             # Simple sentiment analysis based on keywords
             positive_keywords = ['bullish', 'positive', 'growth', 'gain', 'rise', 'up', 'strong', 'beat', 'exceed']
