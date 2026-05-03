@@ -1,24 +1,15 @@
 """
 LangGraph Financial Analysis Workflow
-This module defines the main workflow for financial analysis using LangGraph and Gorq LLM
+
+Builds the multi-agent analysis graph. The graph fans out from a shared
+data-prefetch node, then runs market research, then several agents in
+parallel. financial_data gates the agents that depend on its output
+(technical_analysis, risk_assessment) before all branches converge on
+final_synthesis.
 """
 
 from langgraph.graph import StateGraph, END
-from langchain_core.messages import HumanMessage, SystemMessage
-from typing import List, Optional, Dict, Any, TypedDict
-import json
-from datetime import datetime
-
-from api.models import FinancialAnalysisState
-from tools.gorq_llm import get_llm
 from workflows.state import State
-from tools.financial_tools import (
-    get_stock_data,
-    search_financial_news,
-    calculate_portfolio_metrics,
-    analyze_sector_performance,
-    get_market_sentiment
-)
 from agents import (
     market_research_agent,
     financial_data_agent,
@@ -28,17 +19,20 @@ from agents import (
     portfolio_analysis_agent,
     sector_analysis_agent,
     crypto_agent,
-    final_synthesis_agent
+    final_synthesis_agent,
 )
 
 
+def _data_prefetch_node(state: State) -> dict:
+    from workflows.data_prefetch import prefetch_market_data
+    return prefetch_market_data(state)
+
+
 def create_financial_analysis_workflow() -> StateGraph:
-    """Create the LangGraph workflow for financial analysis"""
-    
-    # Create the state graph
+    """Create and compile the LangGraph workflow for financial analysis."""
     workflow = StateGraph(State)
-    
-    # Add all agent nodes
+
+    workflow.add_node("data_prefetch", _data_prefetch_node)
     workflow.add_node("market_research", market_research_agent)
     workflow.add_node("financial_data", financial_data_agent)
     workflow.add_node("technical_analysis", technical_analysis_agent)
@@ -48,33 +42,33 @@ def create_financial_analysis_workflow() -> StateGraph:
     workflow.add_node("sector_analysis", sector_analysis_agent)
     workflow.add_node("crypto_analysis", crypto_agent)
     workflow.add_node("final_synthesis", final_synthesis_agent)
-    
-    # Define the workflow edges
-    workflow.set_entry_point("market_research")
-    
-    # All analysis agents can run in parallel after market research
-    # Using add_conditional_edges for proper parallel execution
+
+    workflow.set_entry_point("data_prefetch")
+    workflow.add_edge("data_prefetch", "market_research")
+
+    # market_research fans out to agents that don't need financial_data
     workflow.add_edge("market_research", "financial_data")
-    workflow.add_edge("market_research", "technical_analysis")
-    workflow.add_edge("market_research", "risk_assessment")
     workflow.add_edge("market_research", "sentiment_analysis")
     workflow.add_edge("market_research", "portfolio_analysis")
     workflow.add_edge("market_research", "sector_analysis")
     workflow.add_edge("market_research", "crypto_analysis")
-    
-    # All analyses feed into final synthesis
-    workflow.add_edge("financial_data", "final_synthesis")
-    workflow.add_edge("technical_analysis", "final_synthesis")
-    workflow.add_edge("risk_assessment", "final_synthesis")
+
+    # financial_data gates risk and technical
+    workflow.add_edge("financial_data", "technical_analysis")
+    workflow.add_edge("financial_data", "risk_assessment")
+
+    # All analysis agents converge on final_synthesis
     workflow.add_edge("sentiment_analysis", "final_synthesis")
     workflow.add_edge("portfolio_analysis", "final_synthesis")
     workflow.add_edge("sector_analysis", "final_synthesis")
     workflow.add_edge("crypto_analysis", "final_synthesis")
-    
-    # Final synthesis is the end
+    workflow.add_edge("technical_analysis", "final_synthesis")
+    workflow.add_edge("risk_assessment", "final_synthesis")
+
     workflow.add_edge("final_synthesis", END)
-    
+
     return workflow.compile()
+
 
 # Create the workflow instance
 financial_analysis_workflow = create_financial_analysis_workflow()

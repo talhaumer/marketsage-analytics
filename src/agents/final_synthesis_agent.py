@@ -18,7 +18,7 @@ def final_synthesis_agent(state: State) -> State:
         # Combine all analyses
         analyses = {
             'market_research': state.get('market_research', ''),
-            'financial_data': state.get('financial_data', {}).get('analysis', '') if isinstance(state.get('financial_data'), dict) else '',
+            'financial_data': (state.get('financial_data') or {}).get('analysis', ''),
             'technical_analysis': state.get('technical_analysis', ''),
             'risk_assessment': state.get('risk_assessment', ''),
             'sentiment_analysis': state.get('sentiment_analysis', ''),
@@ -26,10 +26,11 @@ def final_synthesis_agent(state: State) -> State:
             'sector_analysis': state.get('sector_analysis', ''),
             'crypto_analysis': state.get('crypto_analysis', '')
         }
-        
+
         # Get analysis type
         analysis_type = state.get('analysis_type', 'comprehensive')
-        symbols_text = ', '.join(state['symbols']) if state['symbols'] else 'General market analysis'
+        symbols_list = state.get('symbols', []) or []
+        symbols_text = ', '.join(symbols_list) if symbols_list else 'General market analysis'
         
         # Create tailored prompt based on analysis type
         if analysis_type == 'sentiment':
