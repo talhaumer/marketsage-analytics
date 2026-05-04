@@ -186,3 +186,12 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+
+# Node / React frontend
+node_modules/
+src/frontend_react/dist/
+src/frontend_react/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
