@@ -2,14 +2,16 @@
 FastAPI Backend for LangGraph Financial Analyst with Gorq LLM
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from collections import deque
 import os
+import re as _re
 from datetime import datetime
 import time
 
 from workflows.financial_analysis_workflow import financial_analysis_workflow
+from tools.financial_tools import get_price_history
 from .models import (
     AnalysisRequest,
     PortfolioRequest,
@@ -17,8 +19,10 @@ from .models import (
     HistoryResponse,
     AnalysisStats,
     HealthResponse,
-    APIInfo
+    APIInfo,
 )
+
+_CHART_SYM_RE = _re.compile(r"^[A-Za-z0-9.]{1,10}$")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -29,7 +33,8 @@ app = FastAPI(
 
 # Add CORS middleware
 _ALLOWED_ORIGINS = os.environ.get(
-    "CORS_ALLOWED_ORIGINS", "http://localhost:7860,http://127.0.0.1:7860"
+    "CORS_ALLOWED_ORIGINS",
+    "http://localhost:5173,http://127.0.0.1:5173",
 ).split(",")
 
 app.add_middleware(
@@ -58,7 +63,8 @@ async def root():
             "/portfolio": "Portfolio analysis endpoint",
             "/health": "Health check endpoint",
             "/history": "Query history endpoint",
-            "/stats": "Analysis statistics endpoint"
+            "/stats": "Analysis statistics endpoint",
+            "/chart-data": "OHLCV chart data endpoint",
         }
     )
 
@@ -311,6 +317,43 @@ async def get_analysis_stats():
         analysis_types=analysis_types,
         most_analyzed_symbols=most_analyzed_symbols
     )
+
+@app.get("/chart-data")
+async def get_chart_data(symbols: str, timeframe: str = "1y"):
+    """Return OHLCV data per symbol shaped for Recharts."""
+    if not symbols.strip():
+        raise HTTPException(status_code=400, detail="symbols parameter is required")
+
+    symbol_list = [s.strip().upper() for s in symbols.split(",") if s.strip()]
+    if not symbol_list:
+        raise HTTPException(status_code=400, detail="No valid symbols provided")
+
+    for sym in symbol_list:
+        if not _CHART_SYM_RE.match(sym):
+            raise HTTPException(status_code=422, detail=f"Invalid symbol: {sym}")
+
+    result = {}
+    for sym in symbol_list[:10]:
+        try:
+            hist = get_price_history(sym, timeframe)
+            if hist.empty:
+                result[sym] = []
+                continue
+            result[sym] = [
+                {
+                    "date": idx.strftime("%Y-%m-%d"),
+                    "close": round(float(row["Close"]), 2),
+                    "volume": int(row.get("Volume", 0)),
+                    "high": round(float(row.get("High", row["Close"])), 2),
+                    "low": round(float(row.get("Low", row["Close"])), 2),
+                    "open": round(float(row.get("Open", row["Close"])), 2),
+                }
+                for idx, row in hist.iterrows()
+            ]
+        except Exception:
+            result[sym] = []
+
+    return result
 
 if __name__ == "__main__":
     import uvicorn
