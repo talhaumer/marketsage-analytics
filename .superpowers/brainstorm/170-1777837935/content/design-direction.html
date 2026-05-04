@@ -1,0 +1,116 @@
+<h2>Which visual style fits MarketSage?</h2>
+<p class="subtitle">Pick the design direction that feels right for a financial AI showcase</p>
+
+<div class="cards">
+
+  <!-- Option A: Dark Terminal -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0a0a0f;padding:14px;font-family:'Courier New',monospace;font-size:11px;border-radius:6px;min-height:160px;">
+        <div style="color:#00ff88;margin-bottom:6px;">▶ MARKETSAGE ANALYTICS <span style="color:#555;">v2.0</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div style="background:#111;padding:8px;border:1px solid #222;border-left:2px solid #00ff88;">
+            <div style="color:#555;font-size:9px;">AAPL</div>
+            <div style="color:#00ff88;font-size:16px;font-weight:bold;">$189.40</div>
+            <div style="color:#00cc66;font-size:9px;">▲ +2.31%</div>
+          </div>
+          <div style="background:#111;padding:8px;border:1px solid #222;border-left:2px solid #ff4444;">
+            <div style="color:#555;font-size:9px;">BTC/USD</div>
+            <div style="color:#fff;font-size:16px;font-weight:bold;">$67,240</div>
+            <div style="color:#ff4444;font-size:9px;">▼ -0.82%</div>
+          </div>
+        </div>
+        <div style="background:#111;padding:8px;border:1px solid #222;margin-bottom:6px;">
+          <div style="color:#555;font-size:9px;">AI ANALYSIS ─────────────────</div>
+          <div style="color:#00ff88;font-size:10px;margin-top:4px;">Strong bullish momentum detected. RSI at 68, approaching</div>
+          <div style="color:#00ff88;font-size:10px;">overbought territory. Volume confirms breakout signal...</div>
+        </div>
+        <div style="display:flex;gap:4px;">
+          <div style="flex:1;background:#111;border:1px solid #222;padding:4px;text-align:center;color:#555;font-size:9px;">RISK ■■■□□ MOD</div>
+          <div style="flex:1;background:#111;border:1px solid #222;padding:4px;text-align:center;color:#00ff88;font-size:9px;">SENTIMENT ▲ 72%</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Dark Terminal</h3>
+      <p>Bloomberg / trading desk aesthetic. Dark, dense, monospace data grids. Feels like a real professional trading tool.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Modern Light SaaS -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f8fafc;padding:14px;border-radius:6px;min-height:160px;font-family:system-ui,sans-serif;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <span style="font-size:13px;font-weight:700;color:#0f172a;">MarketSage</span>
+          <span style="background:#6366f1;color:white;padding:3px 10px;border-radius:20px;font-size:10px;">Live</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px;">
+          <div style="background:white;border-radius:8px;padding:8px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+            <div style="color:#94a3b8;font-size:9px;margin-bottom:2px;">Portfolio Value</div>
+            <div style="color:#0f172a;font-weight:700;font-size:14px;">$48,320</div>
+            <div style="color:#10b981;font-size:9px;">↑ 3.2%</div>
+          </div>
+          <div style="background:white;border-radius:8px;padding:8px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+            <div style="color:#94a3b8;font-size:9px;margin-bottom:2px;">Risk Score</div>
+            <div style="color:#0f172a;font-weight:700;font-size:14px;">Moderate</div>
+            <div style="color:#f59e0b;font-size:9px;">● Balanced</div>
+          </div>
+          <div style="background:white;border-radius:8px;padding:8px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+            <div style="color:#94a3b8;font-size:9px;margin-bottom:2px;">Sentiment</div>
+            <div style="color:#0f172a;font-weight:700;font-size:14px;">Bullish</div>
+            <div style="color:#10b981;font-size:9px;">↑ Strong</div>
+          </div>
+        </div>
+        <div style="background:white;border-radius:8px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+          <div style="color:#94a3b8;font-size:9px;margin-bottom:6px;">ASK MARKETSAGE</div>
+          <div style="background:#f1f5f9;border-radius:6px;padding:6px;color:#64748b;font-size:10px;">What's the outlook for AAPL and MSFT this quarter?</div>
+          <div style="background:#6366f1;color:white;padding:4px 10px;border-radius:6px;font-size:9px;margin-top:6px;display:inline-block;">Analyze →</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Modern Light SaaS</h3>
+      <p>Clean white cards, indigo accents, shadcn/Linear-style. Looks like a polished B2B product. Professional and approachable.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Glassmorphism Dark -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:linear-gradient(135deg,#0d0d1a 0%,#0f1729 50%,#0d0d1a 100%);padding:14px;border-radius:6px;min-height:160px;font-family:system-ui,sans-serif;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(139,92,246,0.3),transparent);border-radius:50%;"></div>
+        <div style="position:absolute;bottom:-10px;left:20px;width:60px;height:60px;background:radial-gradient(circle,rgba(6,182,212,0.2),transparent);border-radius:50%;"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="color:white;font-size:12px;font-weight:600;">MarketSage AI</span>
+          <div style="display:flex;gap:4px;">
+            <span style="width:6px;height:6px;background:#8b5cf6;border-radius:50%;display:inline-block;"></span>
+            <span style="width:6px;height:6px;background:#06b6d4;border-radius:50%;display:inline-block;"></span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px;backdrop-filter:blur(10px);">
+            <div style="color:rgba(255,255,255,0.4);font-size:9px;">AAPL</div>
+            <div style="color:white;font-size:15px;font-weight:700;">$189.40</div>
+            <div style="color:#34d399;font-size:9px;">▲ +2.31%</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px;">
+            <div style="color:rgba(255,255,255,0.4);font-size:9px;">BTC</div>
+            <div style="color:white;font-size:15px;font-weight:700;">$67,240</div>
+            <div style="color:#f87171;font-size:9px;">▼ -0.82%</div>
+          </div>
+        </div>
+        <div style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);border-radius:8px;padding:8px;">
+          <div style="color:rgba(255,255,255,0.4);font-size:9px;margin-bottom:4px;">AI INSIGHT</div>
+          <div style="color:rgba(255,255,255,0.85);font-size:10px;line-height:1.4;">Strong momentum with bullish divergence across sectors. Consider position sizing...</div>
+          <div style="margin-top:6px;height:2px;background:linear-gradient(90deg,#8b5cf6,#06b6d4);border-radius:1px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Glassmorphism Dark</h3>
+      <p>Deep navy/dark with glass cards, purple-cyan gradients, glowing accents. AI-native, futuristic. Looks stunning on demos.</p>
+    </div>
+  </div>
+
+</div>

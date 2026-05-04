@@ -1,0 +1,145 @@
+<h2>How should the app feel to use?</h2>
+<p class="subtitle">The interaction model — what's front-and-center when you open MarketSage</p>
+
+<div class="cards">
+
+  <!-- Option A: Chat-first -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f8fafc;padding:12px;border-radius:6px;font-family:system-ui,sans-serif;min-height:180px;">
+        <!-- Nav -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e2e8f0;">
+          <span style="font-size:12px;font-weight:700;color:#0f172a;">MarketSage</span>
+          <div style="display:flex;gap:6px;">
+            <span style="color:#94a3b8;font-size:10px;">History</span>
+            <span style="color:#94a3b8;font-size:10px;">Stats</span>
+          </div>
+        </div>
+        <!-- Chat messages -->
+        <div style="margin-bottom:8px;">
+          <div style="background:#f1f5f9;border-radius:12px 12px 12px 2px;padding:8px 10px;font-size:10px;color:#475569;margin-bottom:6px;max-width:80%;">
+            What's the outlook for AAPL this quarter?
+          </div>
+          <div style="background:#6366f1;border-radius:12px 12px 2px 12px;padding:8px 10px;font-size:10px;color:white;margin-left:auto;max-width:90%;">
+            <div style="opacity:0.7;font-size:9px;margin-bottom:3px;">MarketSage AI · Technical + Sentiment</div>
+            AAPL shows strong bullish momentum. RSI at 68, approaching overbought. Revenue growth of 8% YoY with services segment accelerating...
+            <div style="margin-top:6px;background:rgba(255,255,255,0.15);border-radius:4px;padding:4px 6px;font-size:9px;">📊 3 charts generated below</div>
+          </div>
+        </div>
+        <!-- Input -->
+        <div style="display:flex;gap:6px;align-items:center;background:white;border:1px solid #e2e8f0;border-radius:8px;padding:6px 8px;">
+          <span style="color:#94a3b8;font-size:10px;flex:1;">Ask about any stock or crypto...</span>
+          <div style="background:#6366f1;color:white;padding:3px 8px;border-radius:5px;font-size:9px;">Send</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Chat-first</h3>
+      <p>Conversation is the hero. Ask questions, get AI responses with charts inline below. Feels like ChatGPT for finance. Familiar and low-friction.</p>
+    </div>
+  </div>
+
+  <!-- Option B: Dashboard-first -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f8fafc;padding:12px;border-radius:6px;font-family:system-ui,sans-serif;min-height:180px;">
+        <!-- Header row -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-size:12px;font-weight:700;color:#0f172a;">MarketSage</span>
+          <div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:6px;padding:3px 8px;font-size:9px;color:#64748b;">AAPL, MSFT, BTC ▾</div>
+        </div>
+        <!-- KPI row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;margin-bottom:6px;">
+          <div style="background:white;border-radius:6px;padding:6px;border:1px solid #e2e8f0;">
+            <div style="color:#94a3b8;font-size:8px;">Sentiment</div>
+            <div style="color:#10b981;font-size:11px;font-weight:700;">Bullish</div>
+          </div>
+          <div style="background:white;border-radius:6px;padding:6px;border:1px solid #e2e8f0;">
+            <div style="color:#94a3b8;font-size:8px;">Risk</div>
+            <div style="color:#f59e0b;font-size:11px;font-weight:700;">Moderate</div>
+          </div>
+          <div style="background:white;border-radius:6px;padding:6px;border:1px solid #e2e8f0;">
+            <div style="color:#94a3b8;font-size:8px;">RSI</div>
+            <div style="color:#0f172a;font-size:11px;font-weight:700;">68.4</div>
+          </div>
+          <div style="background:white;border-radius:6px;padding:6px;border:1px solid #e2e8f0;">
+            <div style="color:#94a3b8;font-size:8px;">Trend</div>
+            <div style="color:#6366f1;font-size:11px;font-weight:700;">↑ UP</div>
+          </div>
+        </div>
+        <!-- Chart area -->
+        <div style="background:white;border-radius:6px;border:1px solid #e2e8f0;padding:6px;margin-bottom:6px;height:44px;display:flex;align-items:flex-end;gap:1px;">
+          <div style="flex:1;background:#e0e7ff;border-radius:1px;" style="height:60%;"></div>
+          <div style="flex:1;height:70%;background:#c7d2fe;border-radius:1px;"></div>
+          <div style="flex:1;height:55%;background:#e0e7ff;border-radius:1px;"></div>
+          <div style="flex:1;height:80%;background:#6366f1;border-radius:1px;"></div>
+          <div style="flex:1;height:90%;background:#6366f1;border-radius:1px;"></div>
+          <div style="flex:1;height:75%;background:#818cf8;border-radius:1px;"></div>
+          <div style="flex:1;height:85%;background:#6366f1;border-radius:1px;"></div>
+        </div>
+        <!-- Analyze button -->
+        <div style="background:#6366f1;color:white;border-radius:6px;padding:5px;text-align:center;font-size:10px;font-weight:600;">Run AI Analysis</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Dashboard-first</h3>
+      <p>Charts and KPIs are the hero. Pick symbols, see live data, then trigger AI analysis. Feels like a BI tool. Great for data-browsing workflows.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Split Panel -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#f8fafc;padding:12px;border-radius:6px;font-family:system-ui,sans-serif;min-height:180px;">
+        <!-- Nav -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #e2e8f0;">
+          <span style="font-size:12px;font-weight:700;color:#0f172a;">MarketSage</span>
+          <span style="background:#dcfce7;color:#16a34a;padding:2px 6px;border-radius:10px;font-size:9px;">● Live</span>
+        </div>
+        <!-- Split layout -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <!-- Left: query panel -->
+          <div>
+            <div style="background:white;border-radius:6px;border:1px solid #e2e8f0;padding:6px;margin-bottom:4px;">
+              <div style="color:#94a3b8;font-size:8px;margin-bottom:4px;">QUESTION</div>
+              <div style="background:#f8fafc;border-radius:4px;padding:4px;font-size:9px;color:#475569;">AAPL outlook for Q3?</div>
+            </div>
+            <div style="background:white;border-radius:6px;border:1px solid #e2e8f0;padding:6px;">
+              <div style="color:#94a3b8;font-size:8px;margin-bottom:4px;">AI ANALYSIS</div>
+              <div style="font-size:9px;color:#0f172a;line-height:1.5;">Strong upward momentum with RSI at 68. Services revenue accelerating. Institutional accumulation pattern visible...</div>
+              <div style="margin-top:4px;display:flex;gap:3px;">
+                <span style="background:#f0fdf4;color:#16a34a;padding:1px 5px;border-radius:3px;font-size:8px;">Bullish</span>
+                <span style="background:#eff6ff;color:#3b82f6;padding:1px 5px;border-radius:3px;font-size:8px;">Technical</span>
+              </div>
+            </div>
+          </div>
+          <!-- Right: live charts -->
+          <div>
+            <div style="background:white;border-radius:6px;border:1px solid #e2e8f0;padding:6px;margin-bottom:4px;height:52px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div style="color:#94a3b8;font-size:8px;">PRICE CHART</div>
+              <div style="display:flex;align-items:flex-end;gap:1px;height:28px;">
+                <div style="flex:1;height:40%;background:#e0e7ff;border-radius:1px;"></div>
+                <div style="flex:1;height:55%;background:#c7d2fe;border-radius:1px;"></div>
+                <div style="flex:1;height:50%;background:#e0e7ff;border-radius:1px;"></div>
+                <div style="flex:1;height:70%;background:#818cf8;border-radius:1px;"></div>
+                <div style="flex:1;height:85%;background:#6366f1;border-radius:1px;"></div>
+                <div style="flex:1;height:80%;background:#6366f1;border-radius:1px;"></div>
+              </div>
+            </div>
+            <div style="background:white;border-radius:6px;border:1px solid #e2e8f0;padding:6px;height:52px;">
+              <div style="color:#94a3b8;font-size:8px;margin-bottom:3px;">AGENT STATUS</div>
+              <div style="font-size:8px;color:#10b981;">✓ Market Research</div>
+              <div style="font-size:8px;color:#10b981;">✓ Technical Analysis</div>
+              <div style="font-size:8px;color:#f59e0b;">⟳ Risk Assessment...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Split Panel</h3>
+      <p>Query + AI analysis on the left, live charts + agent progress on the right. Both worlds visible at once. Best showcase experience — shows the AI working in real-time.</p>
+    </div>
+  </div>
+
+</div>

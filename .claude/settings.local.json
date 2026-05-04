@@ -2,7 +2,21 @@
   "permissions": {
     "allow": [
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(PYTHONPATH=src python -m pytest tests/test_tools.py::test_symbol_map_loads_only_once -v --tb=short)",
+      "Bash(PYTHONPATH=src python -m pytest tests/test_tools.py -v --tb=short)",
+      "Bash(PYTHONPATH=src python -m pytest tests/ --tb=short)",
+      "Bash(PYTHONPATH=src python -m pytest tests/test_workflow.py -v --tb=short)",
+      "Bash(PYTHONPATH=src python -m pytest tests/ -v --tb=short)",
+      "PowerShell($env:PYTHONPATH = \"src\"; python -m pytest tests/test_chart_data.py -v 2>&1 | Select-Object -First 30)",
+      "PowerShell($env:PYTHONPATH = \"src\"; python -m pytest tests/test_chart_data.py -v 2>&1)",
+      "PowerShell($env:PYTHONPATH = \"src\"; python -m pytest tests/ -q 2>&1)",
+      "PowerShell(ruff check *)",
+      "PowerShell(python -m ruff check src/ 2>&1)",
+      "Bash(git *)",
+      "Bash(set PYTHONPATH=src)",
+      "Bash(npm install *)",
+      "Bash(npm run *)"
     ]
   }
 }
