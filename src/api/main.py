@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from collections import deque
 import os
-import re as _re
+import re
 from datetime import datetime
 import time
 
@@ -22,7 +22,8 @@ from .models import (
     APIInfo,
 )
 
-_CHART_SYM_RE = _re.compile(r"^[A-Za-z0-9.]{1,10}$")
+_CHART_SYM_RE = re.compile(r"^[A-Za-z0-9.]{1,10}$")
+_VALID_TIMEFRAMES = {"1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y"}
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -328,12 +329,18 @@ async def get_chart_data(symbols: str, timeframe: str = "1y"):
     if not symbol_list:
         raise HTTPException(status_code=400, detail="No valid symbols provided")
 
+    if len(symbol_list) > 20:
+        raise HTTPException(status_code=422, detail="Too many symbols — maximum 20")
+
+    if timeframe not in _VALID_TIMEFRAMES:
+        raise HTTPException(status_code=422, detail=f"Invalid timeframe: {timeframe}. Must be one of {sorted(_VALID_TIMEFRAMES)}")
+
     for sym in symbol_list:
         if not _CHART_SYM_RE.match(sym):
             raise HTTPException(status_code=422, detail=f"Invalid symbol: {sym}")
 
     result = {}
-    for sym in symbol_list[:10]:
+    for sym in symbol_list:
         try:
             hist = get_price_history(sym, timeframe)
             if hist.empty:
@@ -350,7 +357,8 @@ async def get_chart_data(symbols: str, timeframe: str = "1y"):
                 }
                 for idx, row in hist.iterrows()
             ]
-        except Exception:
+        except Exception as exc:
+            print(f"[chart-data] {sym}: {exc}")
             result[sym] = []
 
     return result

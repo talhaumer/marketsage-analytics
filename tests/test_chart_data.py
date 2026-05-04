@@ -60,3 +60,14 @@ def test_chart_data_empty_hist_returns_empty_list(client):
         response = client.get("/chart-data?symbols=FAKE&timeframe=1y")
     assert response.status_code == 200
     assert response.json()["FAKE"] == []
+
+
+def test_chart_data_rejects_too_many_symbols(client):
+    symbols = ",".join([f"SYM{i}" for i in range(21)])
+    response = client.get(f"/chart-data?symbols={symbols}&timeframe=1y")
+    assert response.status_code == 422
+
+
+def test_chart_data_rejects_invalid_timeframe(client):
+    response = client.get("/chart-data?symbols=AAPL&timeframe=BOGUS")
+    assert response.status_code == 422
